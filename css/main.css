@@ -1,0 +1,72 @@
+body {
+  background: url("http://cookingpress.purethe.me/wp-content/themes/cookingpress/images/bg/content-bg.gif") repeat scroll center center #e8e8e8;
+
+}
+
+h1, h2 {
+  font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif
+}
+
+header h1 {
+  margin: 1rem 2.5rem .5rem; 
+}
+
+header .wrapper-photo {
+  text-align: center;
+}
+
+header .landscape-photo {
+  overflow: hidden;
+  padding: .5em; 
+  margin: 0 2em;
+  background: white;
+  height: 200px;
+}
+
+header .landscape-photo div {
+  width: 100%;
+  height: 100%;
+  background: url(http://www.ahstatic.com/photos/city/vi-v2760_00_1400x442.jpg) no-repeat center top;
+}
+
+.sidebar h1 {
+  margin-left: 2.5rem;
+}
+
+.sidebar .tags {
+  margin-left: 2.5rem;
+}
+
+.sidebar .tags a {
+  margin-right: .5rem;
+}
+
+.main {
+  text-align: center;
+}
+.main article {
+  box-shadow: 0 0 5px #ccc;
+  margin: 1rem;
+  background: white;
+}
+
+.main article h2 {
+  margin: .5rem 0;
+  font-size: 1.2rem;
+}
+
+.main article .post-thumbnail {
+  height: 250px;
+  overflow: hidden;
+}
+.main article .post-thumbnail img {
+  width: 100%;
+}
+
+.main article p {
+  font-family: serif;
+  font-style: italic;
+  color: #422;
+  text-align: justify;
+  padding: 0 1rem;
+}
