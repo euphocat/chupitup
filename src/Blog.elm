@@ -3,9 +3,15 @@ module Blog exposing (..)
 import Html exposing (Html, div, text, label, input, header, h1, h2, article, p, img, span, a)
 import Html.Attributes exposing (class, classList, src, alt)
 import Html.Events exposing (onClick)
-import Html.App as App
+
+
+-- import Html.App as App
+
 import Set
 import Helpers.Tags as Tags
+import Navigation
+import String
+import UrlParser exposing (Parser, (</>), format, int, oneOf, s, string)
 
 
 -- Model
@@ -16,10 +22,6 @@ type alias Model =
     , tags : List Tags.Tag
     , visibleTags : Set.Set Tags.Tag
     }
-
-
-type alias Url =
-    String
 
 
 type alias Article =
@@ -63,13 +65,13 @@ model =
 -- Update
 
 
-type Msg
+type MsgHome
     = UpdateName String
     | ToggleVisibleTag String
 
 
-update : Msg -> Model -> Model
-update msg model =
+updateHome : MsgHome -> Model -> Model
+updateHome msg model =
     case msg of
         ToggleVisibleTag tag ->
             { model | visibleTags = Tags.toggleVisibleTag tag model.visibleTags }
@@ -82,10 +84,10 @@ update msg model =
 -- View
 
 
-view : Model -> Html Msg
-view model =
+viewHome : Model -> Html MsgHome
+viewHome model =
     let
-        viewArticle : Article -> Html Msg
+        viewArticle : Article -> Html MsgHome
         viewArticle { title, description, photoThumbnail } =
             article [ class "pure-u-5-12" ]
                 [ div [ class "post-thumbnail" ]
@@ -118,7 +120,7 @@ view model =
         viewArticles articles visibleTags =
             List.map viewArticle (filterArticles articles visibleTags)
 
-        viewHeader : Html Msg
+        viewHeader : Html MsgHome
         viewHeader =
             header [ class "pure-u-1" ]
                 [ h1 [ class "" ]
@@ -156,6 +158,133 @@ view model =
             ]
 
 
+type alias State =
+    { route : Route }
+
+
+initialState : Route -> State
+initialState route =
+    { route = route }
+
+
+init : Route -> ( State, Cmd Msg )
+init route =
+    ( initialState route, Cmd.none )
+
+
+
+-- Route
+
+
+type alias ArticleId =
+    Int
+
+
+type Route
+    = HomeRoute
+    | ArticleRoute ArticleId
+    | NotFound
+
+
+
+-- Update
+
+
+type alias Url =
+    String
+
+
+type Msg
+    = ShowHome
+    | ShowArticle ArticleId
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update msg state =
+    ( state, Cmd.none )
+
+
+urlUpdate : Route -> State -> ( State, Cmd Msg )
+urlUpdate route state =
+    ( { state | route = route }, Cmd.none )
+
+
+view : State -> Html Msg
+view state =
+    case state.route of
+        HomeRoute ->
+            div [] [ text "home page" ]
+
+        ArticleRoute id ->
+            div [] [ text ("article " ++ toString id) ]
+
+        _ ->
+            div [] [ text "404 not found" ]
+
+
+subscriptions : State -> Sub Msg
+subscriptions state =
+    Sub.none
+
+
+urlParser : Navigation.Parser Route
+urlParser =
+    Navigation.makeParser parse
+
+
+articleParser : Parser (Int -> a) a
+articleParser =
+    s "article" </> int
+
+
+homeParser : Parser a a
+homeParser =
+    oneOf
+        [ (s "index.html")
+        , (s "")
+        ]
+
+
+routeParser : Parser (Route -> a) a
+routeParser =
+    oneOf
+        [ format HomeRoute homeParser
+        , format ArticleRoute articleParser
+        ]
+
+
+parse : Navigation.Location -> Route
+parse { pathname } =
+    let
+        one =
+            Debug.log "path" pathname
+
+        path =
+            if String.startsWith "/" pathname then
+                String.dropLeft 1 pathname
+            else
+                pathname
+    in
+        case UrlParser.parse identity routeParser path of
+            Err err ->
+                NotFound
+
+            Ok route ->
+                route
+
+
 main : Program Never
 main =
-    App.beginnerProgram { model = model, view = view, update = update }
+    Navigation.program urlParser
+        { init = init
+        , view = view
+        , update = update
+        , urlUpdate = urlUpdate
+        , subscriptions = subscriptions
+        }
+
+
+
+--main : Program Never
+--main =
+--    App.beginnerProgram { model = model, view = view, update = update }
