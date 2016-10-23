@@ -29,6 +29,11 @@ header .landscape-photo div {
   background: url(http://www.ahstatic.com/photos/city/vi-v2760_00_1400x442.jpg) no-repeat center top;
 }
 
+.wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
 .sidebar h1 {
   margin-left: 2.5rem;
 }
