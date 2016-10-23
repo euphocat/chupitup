@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "live-server --entry-file=index.html",
-    "make": "elm make src/Blog.elm --output=build/Blog.js --warn; exit 0;",
-    "clean": "rm build -Rf"
+    "make": "elm make src/Blog.elm --output=build/Blog.js --warn",
+    "build": "npm run clean; npm run make & npm run less; exit 0;",
+    "clean": "rm build/* -Rf",
+    "less": "lessc less/*.less > build/styles.css"
   },
   "repository": {
     "type": "git",
@@ -17,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/euphocat/elm-blog/issues"
   },
-  "homepage": "https://github.com/euphocat/elm-blog#readme"
+  "homepage": "https://github.com/euphocat/elm-blog#readme",
+  "devDependencies": {
+    "less": "^2.7.1"
+  }
 }
