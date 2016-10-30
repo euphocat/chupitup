@@ -10,14 +10,21 @@ import Routing.Routes exposing (Route(ArticleRoute), reverse)
 import Set
 
 
-viewHome : State -> Html Msg
+viewHome : State -> List (Html Msg)
 viewHome state =
-    div []
-        [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-            [ div [ class "tags" ] (viewTags state.tags state.visibleTags) ]
-        , div [ class "main pure-u-1 pure-u-lg-2-3" ]
-            (viewArticles state.articles state.visibleTags)
+    [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
+        [ h2 [] [ text "Filtrer par type d'endroits" ]
+        , div [ class "tags" ] (viewTags state.tags state.visibleTags)
+        , h2 [] [ text "Filtrer par lieu" ]
+        , div [ class "tags" ] (viewTags (getPlaces (state.articles)) state.visiblePlaces)
         ]
+    , div [ class "main pure-u-1 pure-u-lg-2-3" ]
+        (viewArticles state.articles state.visibleTags)
+    ]
+
+
+getPlaces articles =
+    List.map (\x -> x.place) articles
 
 
 linkToArticle : ArticleId -> List (Html Msg) -> Html Msg

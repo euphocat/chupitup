@@ -5,6 +5,7 @@ import Html.Attributes exposing (class)
 import Messages exposing (Msg)
 import Models exposing (State)
 import Routing.Routes exposing (..)
+import Views.Article exposing (viewArticle)
 import Views.Home exposing (viewHome)
 import Views.Header exposing (..)
 
@@ -12,17 +13,17 @@ import Views.Header exposing (..)
 view : State -> Html Msg
 view state =
     div [ class "pure-g wrapper" ]
-        [ viewHeader, viewBody state ]
+        [ viewHeader, div [ class "" ] (viewBody state) ]
 
 
-viewBody : State -> Html Msg
+viewBody : State -> List (Html Msg)
 viewBody state =
     case state.route of
         HomeRoute ->
-            div [] [ viewHome state ]
+            (viewHome state)
 
         ArticleRoute id ->
-            div [] [ text ("article " ++ toString id) ]
+            (viewArticle id state)
 
         _ ->
-            div [] [ text "404 not found" ]
+            [ text "404 not found" ]
