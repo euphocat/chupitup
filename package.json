@@ -8,7 +8,7 @@
     "make": "elm make src/Blog.elm --output=build/Blog.js --warn; exit 0;",
     "build": "npm run clean; npm run make & npm run less; exit 0;",
     "clean": "rm build/* -Rf",
-    "less": "lessc less/*.less > build/styles.css"
+    "less": "lessc less/main.less > build/styles.css"
   },
   "repository": {
     "type": "git",
