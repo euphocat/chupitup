@@ -7,12 +7,12 @@ import Messages exposing (Msg)
 import Models exposing (Article, State)
 
 
-findArticle : State -> Int -> Maybe Article
-findArticle state id =
+findArticle : List Article -> Int -> Maybe Article
+findArticle articles id =
     List.head
         (List.filter
             (\a -> a.id == id)
-            state.articles
+            articles
         )
 
 
@@ -34,8 +34,11 @@ viewArticle articleId state =
         one =
             Debug.log "state" state
 
+        articles =
+            (Maybe.withDefault [] state.articles)
+
         article =
-            findArticle state articleId
+            findArticle articles articleId
     in
         case article of
             Just article ->

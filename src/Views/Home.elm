@@ -12,15 +12,20 @@ import Set
 
 viewHome : State -> List (Html Msg)
 viewHome state =
-    [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-        [ h2 [] [ text "Filtrer par type d'endroits" ]
-        , div [ class "tags" ] (viewTags state.tags state.visibleTags)
-        , h2 [] [ text "Filtrer par lieu" ]
-        , div [ class "tags" ] (viewTags (getPlaces (state.articles)) state.visiblePlaces)
-        ]
-    , div [ class "main pure-u-1 pure-u-lg-2-3" ]
-        (viewArticles state.articles state.visibleTags)
-    ]
+    case state.articles of
+        Nothing ->
+            [ div [] [ text "Problem while fetching articles" ] ]
+
+        Just articles ->
+            [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
+                [ h2 [] [ text "Filtrer par type d'endroits" ]
+                , div [ class "tags" ] (viewTags state.tags state.visibleTags)
+                , h2 [] [ text "Filtrer par lieu" ]
+                , div [ class "tags" ] (viewTags (getPlaces (articles)) state.visiblePlaces)
+                ]
+            , div [ class "main pure-u-1 pure-u-lg-2-3" ]
+                (viewArticles articles state.visibleTags)
+            ]
 
 
 getPlaces articles =

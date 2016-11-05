@@ -22,5 +22,8 @@
   "homepage": "https://github.com/euphocat/elm-blog#readme",
   "devDependencies": {
     "less": "^2.7.1"
+  },
+  "dependencies": {
+    "hapi": "^15.2.0"
   }
 }

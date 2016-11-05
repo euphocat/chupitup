@@ -13,7 +13,7 @@ type Route
 
 reverse : Route -> String
 reverse route =
-    case route of
+    case Debug.log "route" route of
         ArticleRoute articleId ->
             "/article/" ++ (toString articleId)
 
