@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+killall node
+
 # this file path
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -7,5 +9,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR/..
 
 ./bin/build.sh
+
+
 
 live-server build/ --entry-file=index.html & nodemon ./server/index.js
