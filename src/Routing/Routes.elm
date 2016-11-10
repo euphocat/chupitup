@@ -8,6 +8,7 @@ type alias ArticleId =
 type Route
     = HomeRoute
     | ArticleRoute ArticleId
+    | AdminRoute
     | NotFound
 
 

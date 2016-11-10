@@ -4,7 +4,7 @@
   "description": "Following elm tuto: https://www.linkedin.com/pulse/single-page-web-apps-elm-part-one-getting-started-new-kevin-greene",
   "main": "index.js",
   "scripts": {
-    "start": "live-server --entry-file=index.html",
+    "start": "./bin/start.sh",
     "make": "elm make src/Blog.elm --output=build/Blog.js --warn; exit 0;",
     "build": "npm run clean; npm run make & npm run less; exit 0;",
     "clean": "rm build/* -Rf",
@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/euphocat/elm-blog#readme",
   "devDependencies": {
-    "less": "^2.7.1"
+    "autoless": "^0.1.7",
+    "less": "^2.7.1",
+    "node-notifier": "^4.6.1"
   },
   "dependencies": {
     "hapi": "^15.2.0"

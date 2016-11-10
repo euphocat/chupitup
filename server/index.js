@@ -25,7 +25,7 @@ server.route({
     path: '/articles',
     handler: function (request, reply) {
         const articles = require('./mocks/articles.json');
-        setTimeout(() => reply(articles), 2000);
+        setTimeout(() => reply(articles), 0);
     }
 });
 

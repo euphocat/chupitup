@@ -1,3 +1,5 @@
+@base: #000;
+
 body {
   background: url("http://cookingpress.purethe.me/wp-content/themes/cookingpress/images/bg/content-bg.gif") repeat scroll center center #e8e8e8;
 
@@ -94,5 +96,20 @@ header {
       text-align: justify;
       padding: 0 1rem;
     }
+  }
+}
+
+.admin {
+  .editor {
+    height: 100vh;
+  }
+  .placeholder {
+    color: lighten(@base, 50%)
+  }
+  .editor-view > *:first-child {
+    margin-top: 0;
+  }
+  .padding5 {
+    padding: 1rem;
   }
 }

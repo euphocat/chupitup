@@ -8,4 +8,4 @@ cd $DIR/..
 
 ./bin/build.sh
 
-live-server build/ --entry-file=index.html
+live-server build/ --entry-file=index.html & nodemon ./server/index.js

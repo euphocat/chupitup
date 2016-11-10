@@ -14,4 +14,4 @@ cp assets/* build/ -R & cp src/index.html build/
 
 elm-make src/Blog.elm --output=build/Blog.js --warn
 
-lessc less/main.less > build/styles.css
+autoless less build & notify -t "Elm blog Chupitup" -m "Build is done"

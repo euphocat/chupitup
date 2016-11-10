@@ -45,9 +45,14 @@ homeParser =
         ]
 
 
+adminParser =
+    s "admin"
+
+
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
         [ format HomeRoute homeParser
         , format ArticleRoute articleParser
+        , format AdminRoute adminParser
         ]

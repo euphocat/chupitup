@@ -8,9 +8,15 @@ type alias ArticleId =
     Int
 
 
+type FetchResult
+    = FetchSucceed (List Article)
+    | FetchFailed Http.Error
+
+
 type Msg
     = ToggleVisibleTag String
+    | EditorContent String
     | ShowHome
+    | ShowAdmin
     | ShowArticle ArticleId
-    | FetchSucceed (List Article)
-    | FetchFailed Http.Error
+    | FetchMsg FetchResult

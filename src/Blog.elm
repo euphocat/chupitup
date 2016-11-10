@@ -1,7 +1,6 @@
 module Blog exposing (..)
 
 import Http
-import Messages exposing (Msg(ShowArticle, ShowHome, ToggleVisibleTag, FetchFailed, FetchSucceed))
 import Models exposing (..)
 import Routing.Parsers exposing (urlParser)
 import Routing.Routes exposing (..)
@@ -10,6 +9,7 @@ import Navigation
 import Task
 import View exposing (view)
 import Json.Decode as Json
+import Messages exposing (..)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -25,21 +25,34 @@ update msg state =
             ToggleVisibleTag tag ->
                 ( toggleVisibleTag tag, Cmd.none )
 
+            EditorContent content ->
+                ( { state | editor = Just content }, Cmd.none )
+
             ShowArticle articleId ->
                 ( state, navigationToRoute (ArticleRoute articleId) )
 
             ShowHome ->
                 ( state, navigationToRoute HomeRoute )
 
-            FetchFailed err ->
-                let
-                    _ =
-                        Debug.log "Error fetching article" err
-                in
-                    ( state, Cmd.none )
+            ShowAdmin ->
+                ( state, navigationToRoute AdminRoute )
 
-            FetchSucceed articles ->
-                ( { state | articles = Just articles }, Cmd.none )
+            FetchMsg fetchResult ->
+                updateFetch fetchResult state
+
+
+updateFetch : FetchResult -> State -> ( State, Cmd Msg )
+updateFetch fetchResult state =
+    case fetchResult of
+        FetchFailed err ->
+            let
+                _ =
+                    Debug.log "Error fetching article" err
+            in
+                ( state, Cmd.none )
+
+        FetchSucceed articles ->
+            ( { state | articles = Just articles }, Cmd.none )
 
 
 decodeArticle =
@@ -58,7 +71,10 @@ decodeArticles =
 
 
 fetchArticles url =
-    Task.perform FetchFailed FetchSucceed (Http.get decodeArticles url)
+    Task.perform
+        (\x -> FetchMsg (FetchFailed x))
+        (\a -> FetchMsg (FetchSucceed a))
+        (Http.get decodeArticles url)
 
 
 init : Route -> ( State, Cmd Msg )

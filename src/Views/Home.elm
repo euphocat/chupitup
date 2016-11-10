@@ -12,24 +12,24 @@ import Set
 
 viewHome : State -> List (Html Msg)
 viewHome state =
-    case state.articles of
-        Nothing ->
-            [ div [] [ text "Problem while fetching articles" ] ]
+    let
+        getPlaces articles =
+            List.map (\x -> x.place) articles
+    in
+        case state.articles of
+            Nothing ->
+                [ div [] [ text "Problem while fetching articles" ] ]
 
-        Just articles ->
-            [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-                [ h2 [] [ text "Filtrer par type d'endroits" ]
-                , div [ class "tags" ] (viewTags state.tags state.visibleTags)
-                , h2 [] [ text "Filtrer par lieu" ]
-                , div [ class "tags" ] (viewTags (getPlaces (articles)) state.visiblePlaces)
+            Just articles ->
+                [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
+                    [ h2 [] [ text "Filtrer par type d'endroits" ]
+                    , div [ class "tags" ] (viewTags state.tags state.visibleTags)
+                    , h2 [] [ text "Filtrer par lieu" ]
+                    , div [ class "tags" ] (viewTags (getPlaces (articles)) state.visiblePlaces)
+                    ]
+                , div [ class "main pure-u-1 pure-u-lg-2-3" ]
+                    (viewArticles articles state.visibleTags)
                 ]
-            , div [ class "main pure-u-1 pure-u-lg-2-3" ]
-                (viewArticles articles state.visibleTags)
-            ]
-
-
-getPlaces articles =
-    List.map (\x -> x.place) articles
 
 
 linkToArticle : ArticleId -> List (Html Msg) -> Html Msg

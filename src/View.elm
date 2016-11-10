@@ -5,6 +5,7 @@ import Html.Attributes exposing (class)
 import Messages exposing (Msg)
 import Models exposing (State)
 import Routing.Routes exposing (..)
+import Views.Admin exposing (viewAdmin)
 import Views.Article exposing (viewArticle)
 import Views.Home exposing (viewHome)
 import Views.Header exposing (..)
@@ -12,8 +13,13 @@ import Views.Header exposing (..)
 
 view : State -> Html Msg
 view state =
-    div [ class "pure-g wrapper" ]
-        [ viewHeader, div [ class "" ] (viewBody state) ]
+    case state.route of
+        AdminRoute ->
+            div [] (viewAdmin state)
+
+        _ ->
+            div [ class "pure-g wrapper" ]
+                [ viewHeader, div [ class "pure-u-1" ] (viewBody state) ]
 
 
 viewBody : State -> List (Html Msg)

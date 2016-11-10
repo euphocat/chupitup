@@ -22,6 +22,7 @@ type alias Article =
 
 type alias State =
     { route : Route
+    , editor : Maybe String
     , articles : Maybe (List Article)
     , tags : List Tag
     , visibleTags : Set.Set Tag
@@ -32,6 +33,7 @@ type alias State =
 newState : Route -> State
 newState route =
     { route = route
+    , editor = Nothing
     , articles = Nothing
     , tags = [ "restaurant", "bar", "atlantis" ]
     , visibleTags = Set.empty
