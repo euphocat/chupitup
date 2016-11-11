@@ -55,6 +55,7 @@ updateFetch fetchResult state =
             ( { state | articles = Just articles }, Cmd.none )
 
 
+decodeArticle : Json.Decoder Article
 decodeArticle =
     Json.object7 Article
         (Json.at [ "id" ] Json.int)
@@ -66,10 +67,12 @@ decodeArticle =
         (Json.at [ "place" ] Json.string)
 
 
+decodeArticles : Json.Decoder (List Article)
 decodeArticles =
     Json.list decodeArticle
 
 
+fetchArticles : Url -> Cmd Msg
 fetchArticles url =
     Task.perform
         (\x -> FetchMsg (FetchFailed x))

@@ -1,6 +1,5 @@
 module Routing.Parsers exposing (..)
 
-import Html.Attributes exposing (for)
 import Navigation
 import Routing.Routes exposing (..)
 import String
@@ -45,6 +44,7 @@ homeParser =
         ]
 
 
+adminParser : Parser a a
 adminParser =
     s "admin"
 
