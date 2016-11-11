@@ -1,17 +1,27 @@
 #!/usr/bin/env bash
 
-# this file path
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+start=`date +%s%N`
 
-# move up to project root
-cd $DIR/..
+cd bin
 
-PATH="$PATH:./node_modules/.bin"
+# include variables
+source ./vars.sh
 
-rm build/* -Rf
+# add the node_modules bin to the current PATH
+PATH="$PATH:$PROJECT_DIR/node_modules/.bin"
 
-cp assets/* build/ -R & cp src/index.html build/
+# clean the build dir
+rm ${BUILD_DIR} -Rf && mkdir ${BUILD_DIR}
 
-elm-make src/Blog.elm --output=build/Blog.js --warn
+cp ${PROJECT_DIR}/assets/* ${BUILD_DIR} -R & cp ${PROJECT_DIR}/src/index.html ${BUILD_DIR}
 
-autoless less build & notify -t "Elm blog Chupitup" -m "Build is done"
+# Elm make
+./elm-make.sh
+
+# CSS
+./css.sh $@
+
+end=`date +%s%N`
+runtime=$(($((end-start))/1000000))
+
+notify -t "Elm blog Chupitup" -m "Build is done in $runtime ms"

@@ -6,9 +6,9 @@
   "scripts": {
     "start": "./bin/start.sh",
     "make": "elm make src/Blog.elm --output=build/Blog.js --warn; exit 0;",
-    "build": "npm run clean; npm run make & npm run less; exit 0;",
-    "clean": "rm build/* -Rf",
-    "less": "lessc less/main.less > build/styles.css"
+    "build": "./bin/build.sh --no-watch --clean-elm",
+    "clean": "rm build/* -Rf & rm elm-stuff/build-artifacts -Rf",
+    "less": "lessc less/main.less > build/css/main.css"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,8 @@
     "node-notifier": "^4.6.1"
   },
   "dependencies": {
-    "hapi": "^15.2.0"
+    "font-awesome": "^4.7.0",
+    "hapi": "^15.2.0",
+    "purecss": "^0.6.0"
   }
 }
