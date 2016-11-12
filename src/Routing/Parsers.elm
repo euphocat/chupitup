@@ -1,9 +1,10 @@
 module Routing.Parsers exposing (..)
 
+import Admin.Routes exposing (AdminRoutes(AdminArticle, AdminHome))
 import Navigation
 import Routing.Routes exposing (..)
 import String
-import UrlParser exposing (Parser, (</>), format, int, oneOf, s, s)
+import UrlParser exposing (Parser, (</>), format, int, oneOf, s, s, string)
 
 
 parse : Navigation.Location -> Route
@@ -20,7 +21,7 @@ parse { pathname } =
     in
         case UrlParser.parse identity routeParser path of
             Err err ->
-                NotFound
+                Debug.log "error" NotFound err
 
             Ok route ->
                 route
@@ -31,9 +32,9 @@ urlParser =
     Navigation.makeParser parse
 
 
-articleParser : Parser (Int -> a) a
+articleParser : Parser (String -> a) a
 articleParser =
-    s "article" </> int
+    s "article" </> string
 
 
 homeParser : Parser a a
@@ -49,10 +50,16 @@ adminParser =
     s "admin"
 
 
+adminArticleParser : Parser (String -> a) a
+adminArticleParser =
+    s "admin" </> s "article" </> string
+
+
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
         [ format HomeRoute homeParser
         , format ArticleRoute articleParser
-        , format AdminRoute adminParser
+        , format (\id -> AdminRoute (AdminArticle id)) adminArticleParser
+        , format (AdminRoute AdminHome) adminParser
         ]

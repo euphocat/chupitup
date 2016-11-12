@@ -7,12 +7,12 @@ import Messages exposing (Msg)
 import Models exposing (Article, State)
 
 
-findArticle : List Article -> Int -> Maybe Article
+findArticle : Maybe (List Article) -> String -> Maybe Article
 findArticle articles id =
     List.head
         (List.filter
             (\a -> a.id == id)
-            articles
+            (Maybe.withDefault [] articles)
         )
 
 
@@ -28,17 +28,14 @@ renderArticle { description, title, body } =
     ]
 
 
-viewArticle : Int -> State -> List (Html Msg)
+viewArticle : String -> State -> List (Html Msg)
 viewArticle articleId state =
     let
         one =
             Debug.log "state" state
 
-        articles =
-            (Maybe.withDefault [] state.articles)
-
         article =
-            findArticle articles articleId
+            findArticle state.articles articleId
     in
         case article of
             Just article ->

@@ -1,11 +1,13 @@
 module View exposing (..)
 
+import Admin.Routes exposing (AdminRoutes(AdminArticle, AdminHome))
+import Admin.Views.Admin exposing (viewAdmin)
+import Admin.Views.Editor exposing (viewEditor)
 import Html exposing (Html, text, div)
 import Html.Attributes exposing (class)
 import Messages exposing (Msg)
 import Models exposing (State)
 import Routing.Routes exposing (..)
-import Views.Admin exposing (viewAdmin)
 import Views.Article exposing (viewArticle)
 import Views.Home exposing (viewHome)
 import Views.Header exposing (..)
@@ -13,8 +15,11 @@ import Views.Header exposing (..)
 
 view : State -> Html Msg
 view state =
-    case state.route of
-        AdminRoute ->
+    case Debug.log "view" state.route of
+        AdminRoute (AdminArticle id) ->
+            div [] (viewEditor id state)
+
+        AdminRoute AdminHome ->
             div [] (viewAdmin state)
 
         _ ->

@@ -10,7 +10,7 @@ type alias Url =
 
 
 type alias Article =
-    { id : Int
+    { id : String
     , title : String
     , description : String
     , body : String

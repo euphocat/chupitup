@@ -1,5 +1,6 @@
 module Blog exposing (..)
 
+import Admin.Routes exposing (AdminRoutes(AdminArticle, AdminHome))
 import Http
 import Models exposing (..)
 import Routing.Parsers exposing (urlParser)
@@ -10,6 +11,17 @@ import Task
 import View exposing (view)
 import Json.Decode as Json
 import Messages exposing (..)
+import Views.Article exposing (findArticle)
+
+
+setEditor : State -> String -> State
+setEditor state id =
+    case findArticle state.articles id of
+        Nothing ->
+            { state | editor = Nothing }
+
+        Just article ->
+            { state | editor = Just article.body }
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -19,7 +31,7 @@ update msg state =
             { state | visibleTags = Tags.toggleVisibleTag tag state.visibleTags }
 
         navigationToRoute route =
-            Navigation.newUrl (reverse route)
+            Navigation.newUrl (reverse (Debug.log "nav" route))
     in
         case msg of
             ToggleVisibleTag tag ->
@@ -35,7 +47,10 @@ update msg state =
                 ( state, navigationToRoute HomeRoute )
 
             ShowAdmin ->
-                ( state, navigationToRoute AdminRoute )
+                ( state, navigationToRoute (AdminRoute AdminHome) )
+
+            EditArticle id ->
+                ( setEditor state id, navigationToRoute (AdminRoute (AdminArticle id)) )
 
             FetchMsg fetchResult ->
                 updateFetch fetchResult state
@@ -58,7 +73,7 @@ updateFetch fetchResult state =
 decodeArticle : Json.Decoder Article
 decodeArticle =
     Json.object7 Article
-        (Json.at [ "id" ] Json.int)
+        (Json.at [ "id" ] Json.string)
         (Json.at [ "title" ] Json.string)
         (Json.at [ "description" ] Json.string)
         (Json.at [ "body" ] Json.string)

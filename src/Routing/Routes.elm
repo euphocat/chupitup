@@ -1,22 +1,27 @@
 module Routing.Routes exposing (..)
 
+import Admin.Routes exposing (..)
+
 
 type alias ArticleId =
-    Int
+    String
 
 
 type Route
     = HomeRoute
     | ArticleRoute ArticleId
-    | AdminRoute
-    | NotFound
+    | AdminRoute AdminRoutes
+    | NotFound String
 
 
 reverse : Route -> String
 reverse route =
     case Debug.log "route" route of
         ArticleRoute articleId ->
-            "/article/" ++ (toString articleId)
+            "/article/" ++ articleId
+
+        AdminRoute (AdminArticle articleId) ->
+            "/admin/article/" ++ articleId
 
         _ ->
             "/"

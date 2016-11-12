@@ -11,7 +11,7 @@ do
 	cp ./node_modules/${library} ${CSS_BUILD_PATH}
 done
 
-if [ $1 = "--no-watch" ]; then
+if [[ $1 = "--no-watch" ]]; then
     autoless --no-watch less ${CSS_BUILD_PATH}
 else
     autoless less ${CSS_BUILD_PATH} &

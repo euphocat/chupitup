@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-killall node
+killall node > /dev/null 2>&1
 
 # this file path
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

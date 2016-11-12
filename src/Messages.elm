@@ -5,7 +5,7 @@ import Models exposing (Article)
 
 
 type alias ArticleId =
-    Int
+    String
 
 
 type FetchResult
@@ -18,5 +18,6 @@ type Msg
     | EditorContent String
     | ShowHome
     | ShowAdmin
+    | EditArticle ArticleId
     | ShowArticle ArticleId
     | FetchMsg FetchResult

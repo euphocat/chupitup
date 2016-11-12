@@ -1,4 +1,4 @@
-module Views.Admin exposing (..)
+module Admin.Views.Editor exposing (..)
 
 import Helpers.MaybeExtra exposing (isNothing)
 import Html exposing (Html, div, form, text, textarea)
@@ -7,11 +7,23 @@ import Html.Events exposing (onInput)
 import Markdown
 import Messages exposing (Msg(EditorContent))
 import Models exposing (State)
+import Views.Article exposing (findArticle)
 
 
-viewAdmin : State -> List (Html Msg)
-viewAdmin state =
+viewEditor : String -> State -> List (Html Msg)
+viewEditor id state =
     let
+        article =
+            findArticle state.articles id
+
+        viewSource article =
+            case article of
+                Nothing ->
+                    ""
+
+                Just { body } ->
+                    body
+
         viewerText =
             Maybe.withDefault "Pas de contenu" state.editor
 
@@ -29,7 +41,7 @@ viewAdmin state =
                         , class "editor pure-input-1 padding5"
                         , placeholder editorPlaceHoler
                         ]
-                        []
+                        [ text (viewSource article) ]
                     ]
                 ]
             , div
