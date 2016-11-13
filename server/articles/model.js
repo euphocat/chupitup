@@ -8,12 +8,32 @@ const articles = Object.create({
     reset
 });
 
+function renameProperty(obj, oldPropertyName, newPropertyName) {
+    const augmentedObject = Object.assign({}, {[newPropertyName]: obj[oldPropertyName]}, obj);
+
+    return Object.keys(augmentedObject)
+        .filter(key => key !== oldPropertyName)
+        .reduce(
+            (prev, next) => Object.assign(prev, {[next]: augmentedObject[next]}),
+            {}
+        );
+}
+
+function renameId(article) {
+    return renameProperty(article, '_id', 'id')
+}
+
+function renameIds(articles) {
+    return articles.map(renameId);
+}
+
 function find(id) {
     return cnx.then(db =>
         db.collection('articles')
             .find({_id: new ObjectID(id)})
             .limit(1)
             .next()
+            .then(renameId)
     );
 }
 
@@ -32,6 +52,7 @@ function list() {
         db.collection('articles')
             .find({})
             .toArray()
+            .then(renameIds)
     );
 }
 

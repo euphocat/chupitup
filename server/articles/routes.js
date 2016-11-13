@@ -6,12 +6,8 @@ module.exports = function (server, articles) {
         method: 'GET',
         path: '/articles',
         handler: function (request, reply) {
-            const addId = article => Object.assign(article, {id: article._id});
-            const addIds = articles => articles.map(addId);
-
             articles
                 .list()
-                .then(addIds)
                 .then(reply);
         }
     });

@@ -1,4 +1,4 @@
-module Helpers.Tags exposing (..)
+module Components.Tags.Tags exposing (..)
 
 import Set
 

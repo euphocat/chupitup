@@ -1,107 +1,18 @@
 module Blog exposing (..)
 
-import Admin.Routes exposing (AdminRoutes(AdminArticle, AdminHome))
-import Http
-import Models exposing (..)
+import Components.Articles.Articles exposing (articleApi, fetchArticles)
+import Messages exposing (Msg)
+import Models exposing (State, newState)
 import Routing.Parsers exposing (urlParser)
-import Routing.Routes exposing (..)
-import Helpers.Tags as Tags exposing (Tag)
-import Navigation
-import Task
+import Routing.Routes exposing (Route)
+import Update exposing (update)
 import View exposing (view)
-import Json.Decode as Json
-import Messages exposing (..)
-import Views.Article exposing (findArticle)
-
-
-setEditor : State -> String -> State
-setEditor state id =
-    case findArticle state.articles id of
-        Nothing ->
-            { state | editor = Nothing }
-
-        Just article ->
-            { state | editor = Just article.body }
-
-
-update : Msg -> State -> ( State, Cmd Msg )
-update msg state =
-    let
-        toggleVisibleTag tag =
-            { state | visibleTags = Tags.toggleVisibleTag tag state.visibleTags }
-
-        navigationToRoute route =
-            Navigation.newUrl (reverse (Debug.log "nav" route))
-    in
-        case msg of
-            ToggleVisibleTag tag ->
-                ( toggleVisibleTag tag, Cmd.none )
-
-            EditorContent content ->
-                ( { state | editor = Just content }, Cmd.none )
-
-            ShowArticle articleId ->
-                ( state, navigationToRoute (ArticleRoute articleId) )
-
-            ShowHome ->
-                ( state, navigationToRoute HomeRoute )
-
-            ShowAdmin ->
-                ( state, navigationToRoute (AdminRoute AdminHome) )
-
-            EditArticle id ->
-                ( setEditor state id, navigationToRoute (AdminRoute (AdminArticle id)) )
-
-            FetchMsg fetchResult ->
-                updateFetch fetchResult state
-
-
-updateFetch : FetchResult -> State -> ( State, Cmd Msg )
-updateFetch fetchResult state =
-    case fetchResult of
-        FetchFailed err ->
-            let
-                _ =
-                    Debug.log "Error fetching article" err
-            in
-                ( state, Cmd.none )
-
-        FetchSucceed articles ->
-            ( { state | articles = Just articles }, Cmd.none )
-
-
-decodeArticle : Json.Decoder Article
-decodeArticle =
-    Json.object7 Article
-        (Json.at [ "id" ] Json.string)
-        (Json.at [ "title" ] Json.string)
-        (Json.at [ "description" ] Json.string)
-        (Json.at [ "body" ] Json.string)
-        (Json.at [ "photoThumbnail" ] Json.string)
-        (Json.at [ "tags" ] (Json.list Json.string))
-        (Json.at [ "place" ] Json.string)
-
-
-decodeArticles : Json.Decoder (List Article)
-decodeArticles =
-    Json.list decodeArticle
-
-
-fetchArticles : Url -> Cmd Msg
-fetchArticles url =
-    Task.perform
-        (\x -> FetchMsg (FetchFailed x))
-        (\a -> FetchMsg (FetchSucceed a))
-        (Http.get decodeArticles url)
+import Navigation
 
 
 init : Route -> ( State, Cmd Msg )
 init route =
-    let
-        url =
-            "http://localhost:3000/articles"
-    in
-        ( newState route, fetchArticles url )
+    ( newState route, fetchArticles articleApi )
 
 
 urlUpdate : Route -> State -> ( State, Cmd Msg )

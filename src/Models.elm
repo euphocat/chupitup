@@ -1,8 +1,8 @@
 module Models exposing (..)
 
+import Components.Tags.Tags exposing (Tag)
 import Routing.Routes exposing (Route)
 import Set
-import Helpers.Tags exposing (Tag)
 
 
 type alias Url =
@@ -22,7 +22,7 @@ type alias Article =
 
 type alias State =
     { route : Route
-    , editor : Maybe String
+    , editor : Maybe Article
     , articles : Maybe (List Article)
     , tags : List Tag
     , visibleTags : Set.Set Tag

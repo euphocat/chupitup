@@ -1,6 +1,6 @@
 module Views.Header exposing (..)
 
-import Common.Events.Utils exposing (onClick)
+import Helpers.Events exposing (onClick)
 import Html exposing (Html, a, div, h1, header, text)
 import Html.Attributes exposing (class, href)
 import Messages exposing (Msg(ShowHome))

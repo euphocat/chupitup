@@ -1,7 +1,7 @@
 module Views.Home exposing (viewHome)
 
-import Common.Events.Utils exposing (onClick)
-import Helpers.Tags exposing (..)
+import Helpers.Events exposing (onClick)
+import Components.Tags.Tags exposing (Tag, isTagActive)
 import Html exposing (Html, a, article, div, h1, h2, header, img, p, text)
 import Html.Attributes exposing (alt, class, classList, href, src)
 import Messages exposing (..)
@@ -18,7 +18,7 @@ viewHome state =
     in
         case state.articles of
             Nothing ->
-                [ div [] [ text "Problem while fetching articles" ] ]
+                [ div [] [ text "No articles to display" ] ]
 
             Just articles ->
                 [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
@@ -74,7 +74,9 @@ filterArticles articles visibleTags =
 
 viewArticles : List Article -> Set.Set Tag -> List (Html Msg)
 viewArticles articles visibleTags =
-    List.map viewArticle (filterArticles articles visibleTags)
+    filterArticles articles visibleTags
+        |> List.sortBy .id
+        |> List.map viewArticle
 
 
 viewTags : List Tag -> Set.Set Tag -> List (Html Msg)

@@ -1,31 +1,35 @@
 module Admin.Views.Editor exposing (..)
 
 import Helpers.MaybeExtra exposing (isNothing)
-import Html exposing (Html, div, form, text, textarea)
+import Html exposing (Html, button, div, form, text, textarea)
 import Html.Attributes exposing (class, classList, placeholder)
-import Html.Events exposing (onInput)
+import Html.Events exposing (onClick, onInput)
 import Markdown
-import Messages exposing (Msg(EditorContent))
-import Models exposing (State)
-import Views.Article exposing (findArticle)
+import Messages exposing (Msg(EditorContent, SaveEditor))
+import Models exposing (Article, State)
+
+
+viewSource : Maybe Article -> String
+viewSource article =
+    case article of
+        Nothing ->
+            ""
+
+        Just { body } ->
+            body
 
 
 viewEditor : String -> State -> List (Html Msg)
 viewEditor id state =
     let
-        article =
-            findArticle state.articles id
-
-        viewSource article =
+        viewerText : Maybe Article -> String
+        viewerText article =
             case article of
                 Nothing ->
                     ""
 
                 Just { body } ->
                     body
-
-        viewerText =
-            Maybe.withDefault "Pas de contenu" state.editor
 
         editorPlaceHoler =
             "Entrer le contenu de l'article en Markdown"
@@ -41,7 +45,7 @@ viewEditor id state =
                         , class "editor pure-input-1 padding5"
                         , placeholder editorPlaceHoler
                         ]
-                        [ text (viewSource article) ]
+                        [ text (viewSource state.editor) ]
                     ]
                 ]
             , div
@@ -50,6 +54,7 @@ viewEditor id state =
                     , ( "placeholder", isEditorEmpty )
                     ]
                 ]
-                [ Markdown.toHtml [ class "padding5 editor-view" ] viewerText ]
+                [ Markdown.toHtml [ class "padding5 editor-view" ] (viewerText state.editor) ]
             ]
+        , div [] [ button [ onClick SaveEditor ] [ text "save" ] ]
         ]

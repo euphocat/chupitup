@@ -1,7 +1,7 @@
 module Admin.Views.Admin exposing (..)
 
 import Admin.Routes exposing (AdminRoutes(AdminArticle))
-import Common.Events.Utils exposing (onClick)
+import Helpers.Events exposing (onClick)
 import Html exposing (Html, a, div, h1, li, text, ul)
 import Html.Attributes exposing (href)
 import Messages exposing (Msg(EditArticle))

@@ -1,5 +1,5 @@
 {
-  "name": "elm-blog",
+  "name": "elm-blog test",
   "version": "1.0.0",
   "description": "Following elm tuto: https://www.linkedin.com/pulse/single-page-web-apps-elm-part-one-getting-started-new-kevin-greene",
   "main": "index.js",
