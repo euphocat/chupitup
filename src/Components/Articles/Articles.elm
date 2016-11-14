@@ -1,15 +1,14 @@
 module Components.Articles.Articles exposing (..)
 
-import Admin.Routes exposing (..)
 import Messages exposing (..)
 import Models exposing (Article, State, Url)
 import Json.Decode as Decode
 import Json.Encode
-import Routing.Routes exposing (..)
 import Http exposing (Value)
 import Task
 
 
+articleApi : String
 articleApi =
     "http://localhost:3000/articles"
 
@@ -44,6 +43,7 @@ fetchArticles url =
         (Http.get decodeArticles url)
 
 
+updateArticles : State -> Article -> Maybe (List Article)
 updateArticles state article =
     state.articles
         |> Maybe.withDefault []

@@ -10,26 +10,27 @@ import Routing.Routes exposing (Route(ArticleRoute), reverse)
 import Set
 
 
-viewHome : State -> List (Html Msg)
-viewHome state =
-    let
-        getPlaces articles =
-            List.map (\x -> x.place) articles
-    in
-        case state.articles of
-            Nothing ->
-                [ div [] [ text "No articles to display" ] ]
+getPlaces : List Article -> List Tag
+getPlaces articles =
+    List.map .place articles
 
-            Just articles ->
-                [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-                    [ h2 [] [ text "Filtrer par type d'endroits" ]
-                    , div [ class "tags" ] (viewTags state.tags state.visibleTags)
-                    , h2 [] [ text "Filtrer par lieu" ]
-                    , div [ class "tags" ] (viewTags (getPlaces (articles)) state.visiblePlaces)
-                    ]
-                , div [ class "main pure-u-1 pure-u-lg-2-3" ]
-                    (viewArticles articles state.visibleTags)
+
+viewHome : State -> List (Html Msg)
+viewHome { tags, visibleTags, visiblePlaces, articles } =
+    case articles of
+        Nothing ->
+            [ div [] [ text "No articles to display" ] ]
+
+        Just articles ->
+            [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
+                [ h2 [] [ text "Filtrer par type d'endroits" ]
+                , div [ class "tags" ] (viewTags tags visibleTags)
+                , h2 [] [ text "Filtrer par lieu" ]
+                , div [ class "tags" ] (viewTags (getPlaces articles) visiblePlaces)
                 ]
+            , div [ class "main pure-u-1 pure-u-lg-2-3" ]
+                (viewArticles articles visibleTags)
+            ]
 
 
 linkToArticle : ArticleId -> List (Html Msg) -> Html Msg
@@ -57,16 +58,15 @@ viewArticle { id, title, description, photoThumbnail } =
 
 isArticleTagsDisplayed : Set.Set Tag -> Article -> Bool
 isArticleTagsDisplayed visibleTags article =
-    let
-        setArticleTags =
-            Set.fromList article.tags
-    in
-        not <| Set.isEmpty <| Set.intersect visibleTags setArticleTags
+    Set.fromList article.tags
+        |> Set.intersect visibleTags
+        |> Set.isEmpty
+        |> not
 
 
-filterArticles : List Article -> Set.Set Tag -> List Article
-filterArticles articles visibleTags =
-    if List.isEmpty (Set.toList visibleTags) then
+filterArticlesByTags : List Article -> Set.Set Tag -> List Article
+filterArticlesByTags articles visibleTags =
+    if Set.isEmpty visibleTags then
         articles
     else
         List.filter (isArticleTagsDisplayed visibleTags) articles
@@ -74,24 +74,25 @@ filterArticles articles visibleTags =
 
 viewArticles : List Article -> Set.Set Tag -> List (Html Msg)
 viewArticles articles visibleTags =
-    filterArticles articles visibleTags
+    filterArticlesByTags articles visibleTags
         |> List.sortBy .id
         |> List.map viewArticle
 
 
+tagToLink : Set.Set Tag -> Tag -> Html Msg
+tagToLink visibleTags tag =
+    a
+        [ classList
+            [ ( "pure-button", True )
+            , ( "pure-button-primary"
+              , isTagActive tag visibleTags
+              )
+            ]
+        , onClick (ToggleVisibleTag tag)
+        ]
+        [ text tag ]
+
+
 viewTags : List Tag -> Set.Set Tag -> List (Html Msg)
 viewTags tags visibleTags =
-    let
-        tagToA tag =
-            a
-                [ classList
-                    [ ( "pure-button", True )
-                    , ( "pure-button-primary"
-                      , isTagActive tag visibleTags
-                      )
-                    ]
-                , onClick (ToggleVisibleTag tag)
-                ]
-                [ text tag ]
-    in
-        List.map tagToA tags
+    List.map (tagToLink visibleTags) tags

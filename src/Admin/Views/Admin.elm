@@ -1,17 +1,16 @@
 module Admin.Views.Admin exposing (..)
 
-import Admin.Routes exposing (AdminRoutes(AdminArticle))
 import Helpers.Events exposing (onClick)
 import Html exposing (Html, a, div, h1, li, text, ul)
 import Html.Attributes exposing (href)
 import Messages exposing (Msg(EditArticle))
 import Models exposing (Article, State)
-import Routing.Routes exposing (Route(AdminRoute), reverse)
+import Routing.Routes exposing (Route(AdminArticle), reverse)
 
 
 viewArticle : Article -> Html Msg
 viewArticle { id, title } =
-    li [] [ a [ (onClick (EditArticle id)), href (reverse (AdminRoute (AdminArticle id))) ] [ text title ] ]
+    li [] [ a [ (onClick (EditArticle id)), href (reverse (AdminArticle id)) ] [ text title ] ]
 
 
 listArticles : Maybe (List Article) -> Html Msg

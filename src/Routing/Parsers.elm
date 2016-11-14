@@ -1,6 +1,5 @@
 module Routing.Parsers exposing (..)
 
-import Admin.Routes exposing (AdminRoutes(AdminArticle, AdminHome))
 import Navigation
 import Routing.Routes exposing (..)
 import String
@@ -60,6 +59,6 @@ routeParser =
     oneOf
         [ format HomeRoute homeParser
         , format ArticleRoute articleParser
-        , format (\id -> AdminRoute (AdminArticle id)) adminArticleParser
-        , format (AdminRoute AdminHome) adminParser
+        , format AdminArticle adminArticleParser
+        , format AdminHome adminParser
         ]

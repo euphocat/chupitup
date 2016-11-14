@@ -31,9 +31,6 @@ renderArticle { description, title, body } =
 viewArticle : String -> State -> List (Html Msg)
 viewArticle articleId state =
     let
-        one =
-            Debug.log "state" state
-
         article =
             findArticle state.articles articleId
     in

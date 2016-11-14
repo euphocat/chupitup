@@ -26,6 +26,7 @@
     "node-notifier": "^4.6.1"
   },
   "dependencies": {
+    "Notify": "github:mlaritz/Vanilla-Notify",
     "font-awesome": "^4.7.0",
     "hapi": "^15.2.0",
     "joi": "^9.2.0",

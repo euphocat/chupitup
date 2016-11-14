@@ -1,12 +1,14 @@
 module Admin.Views.Editor exposing (..)
 
 import Helpers.MaybeExtra exposing (isNothing)
-import Html exposing (Html, button, div, form, text, textarea)
-import Html.Attributes exposing (class, classList, placeholder)
+import Html exposing (Html, button, div, form, i, text, textarea)
+import Html.Attributes exposing (attribute, class, classList, placeholder)
 import Html.Events exposing (onClick, onInput)
 import Markdown
-import Messages exposing (Msg(EditorContent, SaveEditor))
+import Messages exposing (Msg(EditorContent, SaveEditor, ShowAdmin))
 import Models exposing (Article, State)
+import Color
+import FontAwesome
 
 
 viewSource : Maybe Article -> String
@@ -56,5 +58,10 @@ viewEditor id state =
                 ]
                 [ Markdown.toHtml [ class "padding5 editor-view" ] (viewerText state.editor) ]
             ]
-        , div [] [ button [ onClick SaveEditor ] [ text "save" ] ]
+        , div [ class "actions" ]
+            [ button [ onClick SaveEditor, class "pure-button pure-button-primary" ]
+                [ FontAwesome.save Color.white 50 ]
+            , button [ onClick ShowAdmin, class "pure-button" ]
+                [ FontAwesome.sign_out Color.white 50 ]
+            ]
         ]

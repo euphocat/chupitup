@@ -1,6 +1,5 @@
 module Routing.Routes exposing (..)
 
-import Admin.Routes exposing (..)
 import Navigation
 
 
@@ -11,7 +10,8 @@ type alias ArticleId =
 type Route
     = HomeRoute
     | ArticleRoute ArticleId
-    | AdminRoute AdminRoutes
+    | AdminHome
+    | AdminArticle ArticleId
     | NotFound String
 
 
@@ -26,10 +26,10 @@ reverse route =
         ArticleRoute articleId ->
             "/article/" ++ articleId
 
-        AdminRoute AdminHome ->
+        AdminHome ->
             "/admin"
 
-        AdminRoute (AdminArticle articleId) ->
+        AdminArticle articleId ->
             "/admin/article/" ++ articleId
 
         _ ->

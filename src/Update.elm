@@ -1,17 +1,12 @@
 module Update exposing (..)
 
-import Admin.Routes exposing (..)
 import Components.Articles.Articles exposing (patchArticle, updateArticles)
 import Components.Tags.Tags exposing (toggleVisibleTag)
 import Messages exposing (..)
 import Models exposing (Article, State)
+import Notifications exposing (notify)
 import Routing.Routes exposing (..)
 import Views.Article exposing (findArticle)
-
-
-setEditor : State -> String -> State
-setEditor state id =
-    { state | editor = findArticle state.articles id }
 
 
 updateEditor : Maybe Article -> String -> Maybe Article
@@ -43,10 +38,10 @@ update msg state =
             ( state, navigationToRoute HomeRoute )
 
         ShowAdmin ->
-            ( state, navigationToRoute (AdminRoute AdminHome) )
+            ( state, navigationToRoute AdminHome )
 
         EditArticle id ->
-            ( setEditor state id, navigationToRoute (AdminRoute (AdminArticle id)) )
+            ( { state | editor = findArticle state.articles id }, navigationToRoute (AdminArticle id) )
 
         FetchFailed error ->
             ( state, Cmd.none )
@@ -58,4 +53,4 @@ update msg state =
             ( { state | articles = Just articles }, Cmd.none )
 
         PatchSucceed article ->
-            ( { state | articles = updateArticles state article }, navigationToRoute (AdminRoute AdminHome) )
+            ( { state | articles = updateArticles state article }, notify "Article modifié" Notifications.Success )

@@ -21,6 +21,10 @@ cp ${PROJECT_DIR}/assets/* ${BUILD_DIR} -R & cp ${PROJECT_DIR}/src/index.html ${
 # CSS
 ./css.sh $@
 
+cp ${PROJECT_DIR}/node_modules/Notify/dist/vanilla-notify.css ${PROJECT_DIR}/${CSS_BUILD_PATH}
+mkdir ${BUILD_DIR}/js
+cp ${PROJECT_DIR}/node_modules/Notify/dist/vanilla-notify.js ${BUILD_DIR}/js/
+
 end=`date +%s%N`
 runtime=$(($((end-start))/1000000))
 
