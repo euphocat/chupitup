@@ -8,13 +8,13 @@ const articles = Object.create({
     reset
 });
 
-function renameProperty(obj, oldPropertyName, newPropertyName) {
-    const augmentedObject = Object.assign({}, {[newPropertyName]: obj[oldPropertyName]}, obj);
+function renameProperty(obj, oldName, newName) {
 
-    return Object.keys(augmentedObject)
-        .filter(key => key !== oldPropertyName)
-        .reduce(
-            (prev, next) => Object.assign(prev, {[next]: augmentedObject[next]}),
+    const getKey = key => key === oldName ? newName : key;
+
+    return Object.keys(obj)
+        .reduce((acc, currentKey) =>
+            Object.assign(acc, {[getKey(currentKey)]: obj[currentKey]}),
             {}
         );
 }
