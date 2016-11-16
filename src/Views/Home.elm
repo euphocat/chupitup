@@ -24,19 +24,16 @@ viewHome state =
 
 
 viewSideBar : State -> List Article -> Html Msg
-viewSideBar { tags, visibleTags, visiblePlaces } articles =
+viewSideBar { tags, visibleTags } articles =
     let
-        allVisibleTags =
-            Set.union visibleTags visiblePlaces
-
         places =
             List.map .place articles
     in
         div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
             [ h2 [] [ text "Filtrer par type d'endroits" ]
-            , div [ class "tags" ] (viewTags tags allVisibleTags)
+            , div [ class "tags" ] (viewTags tags visibleTags)
             , h2 [] [ text "Filtrer par lieu" ]
-            , div [ class "tags" ] (viewTags places allVisibleTags)
+            , div [ class "tags" ] (viewTags places visibleTags)
             ]
 
 
@@ -95,7 +92,7 @@ tagToLink visibleTags tag =
               , isTagActive tag visibleTags
               )
             ]
-        , onClick (ToggleVisibleTag tag)
+        , onClick <| ToggleVisibleTag tag
         ]
         [ text tag ]
 

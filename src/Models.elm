@@ -26,7 +26,6 @@ type alias State =
     , articles : Maybe (List Article)
     , tags : List Tag
     , visibleTags : Set.Set Tag
-    , visiblePlaces : Set.Set Tag
     }
 
 
@@ -37,5 +36,4 @@ newState route =
     , articles = Nothing
     , tags = [ "restaurant", "bar", "atlantis" ]
     , visibleTags = Set.empty
-    , visiblePlaces = Set.empty
     }
