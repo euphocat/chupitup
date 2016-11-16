@@ -12,7 +12,7 @@ type Route
     | ArticleRoute ArticleId
     | AdminHome
     | AdminArticle ArticleId
-    | NotFound String
+    | NotFound
 
 
 navigationToRoute : Route -> Cmd a

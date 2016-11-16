@@ -4,7 +4,7 @@ import Messages exposing (..)
 import Models exposing (Article, State, Url)
 import Json.Decode as Decode
 import Json.Encode
-import Http exposing (Value)
+import Http exposing (expectJson, request)
 import Task
 
 
@@ -15,7 +15,7 @@ articleApi =
 
 decodeArticle : Decode.Decoder Article
 decodeArticle =
-    Decode.object7 Article
+    Decode.map7 Article
         (Decode.at [ "id" ] Decode.string)
         (Decode.at [ "title" ] Decode.string)
         (Decode.at [ "description" ] Decode.string)
@@ -25,22 +25,19 @@ decodeArticle =
         (Decode.at [ "place" ] Decode.string)
 
 
-encodeArticle : Article -> Json.Encode.Value
-encodeArticle article =
-    Json.Encode.object [ ( "body", Json.Encode.string article.body ) ]
-
-
 decodeArticles : Decode.Decoder (List Article)
 decodeArticles =
     Decode.list decodeArticle
 
 
-fetchArticles : Url -> Cmd Msg
-fetchArticles url =
-    Task.perform
-        FetchFailed
-        FetchSucceed
-        (Http.get decodeArticles url)
+encodeArticle : Article -> Json.Encode.Value
+encodeArticle article =
+    Json.Encode.object [ ( "body", Json.Encode.string article.body ) ]
+
+
+getArticles : String -> Task.Task Http.Error (List Article)
+getArticles url =
+    Http.toTask <| Http.get url decodeArticles
 
 
 updateArticles : State -> Article -> Maybe (List Article)
@@ -55,23 +52,21 @@ updateArticles state article =
 patchArticle : Maybe Article -> Cmd Msg
 patchArticle article =
     let
-        request : Article -> Http.Request
-        request article =
-            { verb = "PATCH"
-            , headers = [ ( "Content-Type", "application/json" ) ]
-            , url = articleApi ++ "/" ++ article.id
-            , body = (Http.string (Json.Encode.encode 0 (encodeArticle article)))
-            }
-
-        sendTask article =
-            Http.send Http.defaultSettings (request article)
+        put : Article -> Http.Request Article
+        put article =
+            request
+                { method = "PATCH"
+                , headers = []
+                , url = articleApi ++ "/" ++ article.id
+                , body = Http.jsonBody <| encodeArticle article
+                , expect = expectJson decodeArticle
+                , timeout = Nothing
+                , withCredentials = False
+                }
     in
         case article of
             Nothing ->
                 Cmd.none
 
             Just article ->
-                Task.perform
-                    PatchFailed
-                    PatchSucceed
-                    (Http.fromJson decodeArticle (sendTask article))
+                Http.send UpdateArticle (put article)

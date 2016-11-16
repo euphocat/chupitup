@@ -1,23 +1,38 @@
 module Blog exposing (..)
 
-import Components.Articles.Articles exposing (articleApi, fetchArticles)
-import Messages exposing (Msg)
+import Components.Articles.Articles exposing (articleApi, getArticles)
+import Messages exposing (Msg(FetchArticles, NoOp, SetEditor, UpdateUrl))
 import Models exposing (State, newState)
-import Routing.Parsers exposing (urlParser)
-import Routing.Routes exposing (Route)
 import Update exposing (update)
 import View exposing (view)
 import Navigation
+import Platform.Cmd
+import Task exposing (andThen, succeed)
+import Http
+import Routing.Parsers exposing (parse)
+import Routing.Routes exposing (Route(AdminArticle, ArticleRoute))
 
 
-init : Route -> ( State, Cmd Msg )
-init route =
-    ( newState route, fetchArticles articleApi )
+init : Navigation.Location -> ( State, Cmd Msg )
+init location =
+    let
+        route =
+            parse location
+
+        setEditor articles =
+            case route of
+                AdminArticle id ->
+                    ( articles, Just id )
+
+                _ ->
+                    ( articles, Nothing )
+    in
+        ( newState route, Task.attempt FetchArticles <| Task.map setEditor <| getArticles articleApi )
 
 
-urlUpdate : Route -> State -> ( State, Cmd Msg )
-urlUpdate route state =
-    ( { state | route = route }, Cmd.none )
+urlUpdate : Navigation.Location -> Msg
+urlUpdate location =
+    UpdateUrl <| parse location
 
 
 subscriptions : State -> Sub Msg
@@ -25,12 +40,11 @@ subscriptions state =
     Sub.none
 
 
-main : Program Never
+main : Program Never State Msg
 main =
-    Navigation.program urlParser
+    Navigation.program urlUpdate
         { init = init
         , view = view
         , update = update
-        , urlUpdate = urlUpdate
         , subscriptions = subscriptions
         }

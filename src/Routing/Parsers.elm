@@ -1,39 +1,18 @@
-module Routing.Parsers exposing (..)
+module Routing.Parsers exposing (parse)
 
 import Navigation
 import Routing.Routes exposing (..)
-import String
-import UrlParser exposing (Parser, (</>), format, int, oneOf, s, s, string)
+import UrlParser exposing (Parser, (</>), map, oneOf, parsePath, s, string)
 
 
 parse : Navigation.Location -> Route
-parse { pathname } =
-    let
-        one =
-            Debug.log "path" pathname
+parse location =
+    case parsePath routeParser location of
+        Nothing ->
+            NotFound
 
-        path =
-            if String.startsWith "/" pathname then
-                String.dropLeft 1 pathname
-            else
-                pathname
-    in
-        case UrlParser.parse identity routeParser path of
-            Err err ->
-                Debug.log "error" NotFound err
-
-            Ok route ->
-                route
-
-
-urlParser : Navigation.Parser Route
-urlParser =
-    Navigation.makeParser parse
-
-
-articleParser : Parser (String -> a) a
-articleParser =
-    s "article" </> string
+        Just route ->
+            route
 
 
 homeParser : Parser a a
@@ -44,21 +23,11 @@ homeParser =
         ]
 
 
-adminParser : Parser a a
-adminParser =
-    s "admin"
-
-
-adminArticleParser : Parser (String -> a) a
-adminArticleParser =
-    s "admin" </> s "article" </> string
-
-
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
-        [ format HomeRoute homeParser
-        , format ArticleRoute articleParser
-        , format AdminArticle adminArticleParser
-        , format AdminHome adminParser
+        [ map HomeRoute homeParser
+        , map ArticleRoute (s "article" </> string)
+        , map AdminArticle (s "admin" </> s "article" </> string)
+        , map AdminHome (s "admin")
         ]

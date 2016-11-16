@@ -11,6 +11,7 @@ type NotificationType
     = Success
 
 
+notify : String -> NotificationType -> Cmd msg
 notify message notificationType =
     let
         stringType =

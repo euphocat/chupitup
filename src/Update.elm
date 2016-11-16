@@ -22,6 +22,9 @@ updateEditor editor content =
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
+        NoOp ->
+            ( state, Cmd.none )
+
         ToggleVisibleTag tag ->
             ( { state | visibleTags = toggleVisibleTag tag state.visibleTags }, Cmd.none )
 
@@ -32,7 +35,7 @@ update msg state =
             ( state, patchArticle state.editor )
 
         ShowArticle articleId ->
-            ( state, navigationToRoute (ArticleRoute articleId) )
+            ( state, navigationToRoute <| ArticleRoute articleId )
 
         ShowHome ->
             ( state, navigationToRoute HomeRoute )
@@ -41,16 +44,29 @@ update msg state =
             ( state, navigationToRoute AdminHome )
 
         EditArticle id ->
-            ( { state | editor = findArticle state.articles id }, navigationToRoute (AdminArticle id) )
+            ( { state | editor = findArticle state.articles id }, navigationToRoute <| AdminArticle id )
 
-        FetchFailed error ->
+        SetEditor id ->
+            ( { state | editor = findArticle state.articles id }, Cmd.none )
+
+        FetchArticles (Err error) ->
             ( state, Cmd.none )
 
-        PatchFailed error ->
+        FetchArticles (Ok ( articles, id )) ->
+            ( { state
+                | articles = Just articles
+                , editor = findArticle (Just articles) (Maybe.withDefault "" id)
+              }
+            , Cmd.none
+            )
+
+        UpdateArticle (Err error) ->
             ( state, Cmd.none )
 
-        FetchSucceed articles ->
-            ( { state | articles = Just articles }, Cmd.none )
+        UpdateUrl route ->
+            ( { state | route = route }, Cmd.none )
 
-        PatchSucceed article ->
-            ( { state | articles = updateArticles state article }, notify "Article modifié" Notifications.Success )
+        UpdateArticle (Ok article) ->
+            ( { state | articles = updateArticles state article }
+            , notify "Article modifié" Notifications.Success
+            )

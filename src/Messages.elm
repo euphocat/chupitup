@@ -2,6 +2,7 @@ module Messages exposing (..)
 
 import Http
 import Models exposing (Article)
+import Routing.Routes exposing (Route)
 
 
 type alias ArticleId =
@@ -9,14 +10,15 @@ type alias ArticleId =
 
 
 type Msg
-    = ToggleVisibleTag String
+    = UpdateUrl Route
+    | ToggleVisibleTag String
     | EditorContent String
     | SaveEditor
+    | SetEditor ArticleId
     | ShowHome
     | ShowAdmin
     | EditArticle ArticleId
     | ShowArticle ArticleId
-    | FetchSucceed (List Article)
-    | FetchFailed Http.Error
-    | PatchSucceed Article
-    | PatchFailed Http.Error
+    | FetchArticles (Result Http.Error ( List Article, Maybe ArticleId ))
+    | UpdateArticle (Result Http.Error Article)
+    | NoOp

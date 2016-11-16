@@ -7,8 +7,10 @@ import Html.Events exposing (onClick, onInput)
 import Markdown
 import Messages exposing (Msg(EditorContent, SaveEditor, ShowAdmin))
 import Models exposing (Article, State)
-import Color
-import FontAwesome
+
+
+--import Color
+--import FontAwesome
 
 
 viewSource : Maybe Article -> String
@@ -60,8 +62,8 @@ viewEditor id state =
             ]
         , div [ class "actions" ]
             [ button [ onClick SaveEditor, class "pure-button pure-button-primary" ]
-                [ FontAwesome.save Color.white 50 ]
+                [ text "Enregistrer" ]
             , button [ onClick ShowAdmin, class "pure-button" ]
-                [ FontAwesome.sign_out Color.white 50 ]
+                [ text "Quitter" ]
             ]
         ]
