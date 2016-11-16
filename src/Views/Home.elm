@@ -10,32 +10,39 @@ import Routing.Routes exposing (Route(ArticleRoute), reverse)
 import Set
 
 
-getPlaces : List Article -> List Tag
-getPlaces articles =
-    List.map .place articles
-
-
 viewHome : State -> List (Html Msg)
-viewHome { tags, visibleTags, visiblePlaces, articles } =
-    case articles of
+viewHome state =
+    case state.articles of
         Nothing ->
             [ div [] [ text "No articles to display" ] ]
 
         Just articles ->
-            [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-                [ h2 [] [ text "Filtrer par type d'endroits" ]
-                , div [ class "tags" ] (viewTags tags visibleTags)
-                , h2 [] [ text "Filtrer par lieu" ]
-                , div [ class "tags" ] (viewTags (getPlaces articles) visiblePlaces)
-                ]
+            [ viewSideBar state articles
             , div [ class "main pure-u-1 pure-u-lg-2-3" ]
-                (viewArticles articles visibleTags)
+                (viewArticles articles state.visibleTags)
+            ]
+
+
+viewSideBar : State -> List Article -> Html Msg
+viewSideBar { tags, visibleTags, visiblePlaces } articles =
+    let
+        allVisibleTags =
+            Set.union visibleTags visiblePlaces
+
+        places =
+            List.map .place articles
+    in
+        div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
+            [ h2 [] [ text "Filtrer par type d'endroits" ]
+            , div [ class "tags" ] (viewTags tags allVisibleTags)
+            , h2 [] [ text "Filtrer par lieu" ]
+            , div [ class "tags" ] (viewTags places allVisibleTags)
             ]
 
 
 linkToArticle : ArticleId -> List (Html Msg) -> Html Msg
 linkToArticle id content =
-    a [ (onClick (ShowArticle id)), href (reverse (ArticleRoute id)) ] content
+    a [ onClick <| ShowArticle id, href <| reverse <| ArticleRoute id ] content
 
 
 viewArticle : Article -> Html Msg
@@ -58,7 +65,7 @@ viewArticle { id, title, description, photoThumbnail } =
 
 isArticleTagsDisplayed : Set.Set Tag -> Article -> Bool
 isArticleTagsDisplayed visibleTags article =
-    Set.fromList article.tags
+    Set.fromList (article.place :: article.tags)
         |> Set.intersect visibleTags
         |> Set.isEmpty
         |> not
