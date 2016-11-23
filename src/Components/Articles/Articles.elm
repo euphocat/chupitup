@@ -40,6 +40,22 @@ getArticles url =
     Http.toTask <| Http.get url decodeArticles
 
 
+getPlaces =
+    let
+        url =
+            "http://localhost:3000/places"
+    in
+        Http.send FetchPlaces <| Http.get url <| Decode.list <| Decode.string
+
+
+getCategories =
+    let
+        url =
+            "http://localhost:3000/categories"
+    in
+        Http.send FetchCategories <| Http.get url <| Decode.list <| Decode.string
+
+
 updateArticles : State -> Article -> Maybe (List Article)
 updateArticles state article =
     state.articles

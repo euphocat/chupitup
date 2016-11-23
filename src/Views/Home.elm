@@ -24,17 +24,13 @@ viewHome state =
 
 
 viewSideBar : State -> List Article -> Html Msg
-viewSideBar { tags, visibleTags } articles =
-    let
-        places =
-            List.map .place articles
-    in
-        div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-            [ h2 [] [ text "Filtrer par type d'endroits" ]
-            , div [ class "tags" ] (viewTags tags visibleTags)
-            , h2 [] [ text "Filtrer par lieu" ]
-            , div [ class "tags" ] (viewTags places visibleTags)
-            ]
+viewSideBar { places, categories, visibleTags } articles =
+    div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
+        [ h2 [] [ text "Filtrer par type d'endroits" ]
+        , div [ class "tags" ] (viewTags categories visibleTags)
+        , h2 [] [ text "Filtrer par lieu" ]
+        , div [ class "tags" ] (viewTags places visibleTags)
+        ]
 
 
 linkToArticle : ArticleId -> List (Html Msg) -> Html Msg
@@ -97,6 +93,6 @@ tagToLink visibleTags tag =
         [ text tag ]
 
 
-viewTags : List Tag -> Set.Set Tag -> List (Html Msg)
+viewTags : Maybe (Set.Set Tag) -> Set.Set Tag -> List (Html Msg)
 viewTags tags visibleTags =
-    List.map (tagToLink visibleTags) tags
+    List.map (tagToLink visibleTags) <| Set.toList <| Maybe.withDefault Set.empty tags

@@ -1,11 +1,14 @@
 const cnx = require('../connection');
 const ObjectID = require('mongodb').ObjectID;
+const utils = require('../common/utils');
 
 const articles = Object.create({
     find,
     update,
     list,
-    reset
+    reset,
+    getAllCategories,
+    getAllPlaces
 });
 
 function renameProperty(obj, oldName, newName) {
@@ -14,7 +17,7 @@ function renameProperty(obj, oldName, newName) {
 
     return Object.keys(obj)
         .reduce((acc, currentKey) =>
-            Object.assign(acc, {[getKey(currentKey)]: obj[currentKey]}),
+                Object.assign(acc, {[getKey(currentKey)]: obj[currentKey]}),
             {}
         );
 }
@@ -76,6 +79,27 @@ function reset() {
         db.dropCollection('articles')
             .then(recreateDb, recreateDb)
     );
+}
+
+function getAllCategories() {
+
+    const getTags = articles =>
+        articles
+            .map(({tags}) => tags)
+            .reduce((prev, next) => prev.concat(next), [])
+            .filter(utils.uniqVal);
+
+    return list()
+        .then(getTags);
+}
+
+function getAllPlaces () {
+    const getPlaces = articles =>
+        articles
+            .map(({place}) => place)
+            .filter(utils.uniqVal);
+
+    return list().then(getPlaces);
 }
 
 module.exports = articles;

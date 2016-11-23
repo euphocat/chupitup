@@ -2,7 +2,7 @@ module Models exposing (..)
 
 import Components.Tags.Tags exposing (Tag)
 import Routing.Routes exposing (Route)
-import Set
+import Set exposing (Set)
 
 
 type alias Url =
@@ -24,8 +24,9 @@ type alias State =
     { route : Route
     , editor : Maybe Article
     , articles : Maybe (List Article)
-    , tags : List Tag
-    , visibleTags : Set.Set Tag
+    , categories : Maybe (Set Tag)
+    , places : Maybe (Set Tag)
+    , visibleTags : Set Tag
     }
 
 
@@ -34,6 +35,7 @@ newState route =
     { route = route
     , editor = Nothing
     , articles = Nothing
-    , tags = [ "restaurant", "bar", "atlantis" ]
+    , categories = Nothing
+    , places = Nothing
     , visibleTags = Set.empty
     }

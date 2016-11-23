@@ -7,6 +7,7 @@ import Models exposing (Article, State)
 import Notifications exposing (notify)
 import Routing.Routes exposing (..)
 import Views.Article exposing (findArticle)
+import Set
 
 
 updateEditor : Maybe Article -> String -> Maybe Article
@@ -70,3 +71,15 @@ update msg state =
             ( { state | articles = updateArticles state article }
             , notify "Article modifié" Notifications.Success
             )
+
+        FetchPlaces (Err error) ->
+            ( state, Cmd.none )
+
+        FetchPlaces (Ok places) ->
+            ( { state | places = Just <| Set.fromList places }, Cmd.none )
+
+        FetchCategories (Err error) ->
+            ( state, Cmd.none )
+
+        FetchCategories (Ok categories) ->
+            ( { state | categories = Just <| Set.fromList categories }, Cmd.none )

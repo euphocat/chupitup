@@ -57,6 +57,26 @@ module.exports = function (server, articles) {
 
     server.route({
         method: 'GET',
+        path: '/categories',
+        handler: (request, reply) => {
+            articles
+                .getAllCategories()
+                .then(reply);
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/places',
+        handler: (request, reply) => {
+            articles
+                .getAllPlaces()
+                .then(reply);
+        }
+    });
+
+    server.route({
+        method: 'GET',
         path: '/reset',
         handler: (request, reply) => {
             articles
