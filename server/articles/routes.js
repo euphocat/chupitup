@@ -5,6 +5,14 @@ module.exports = function (server, articles) {
     server.route({
         method: 'GET',
         path: '/articles',
+        config: {
+            validate: {
+                query: {
+                    places: Joi.array().items(Joi.string()).single(),
+                    categories: Joi.array().items(Joi.string()).single()
+                }
+            }
+        },
         handler: function (request, reply) {
             articles
                 .list()
