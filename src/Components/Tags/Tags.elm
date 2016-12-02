@@ -1,20 +1,30 @@
 module Components.Tags.Tags exposing (..)
 
-import Set
+
+type Tag
+    = Place String
+    | Category String
 
 
-type alias Tag =
-    String
-
-
-toggleVisibleTag : Tag -> Set.Set Tag -> Set.Set Tag
+toggleVisibleTag : Tag -> List Tag -> List Tag
 toggleVisibleTag tag visibleTags =
-    if Set.member tag visibleTags then
-        Set.remove tag visibleTags
+    if List.member tag visibleTags then
+        visibleTags
+            |> List.filter ((/=) tag)
     else
-        Set.insert tag visibleTags
+        tag :: visibleTags
 
 
-isTagActive : Tag -> Set.Set Tag -> Bool
-isTagActive tag tags =
-    Set.member tag tags
+isTagActive : Tag -> List Tag -> Bool
+isTagActive =
+    List.member
+
+
+tagToString : Tag -> String
+tagToString tag =
+    case tag of
+        Place tagPayload ->
+            tagPayload
+
+        Category tagPayload ->
+            tagPayload

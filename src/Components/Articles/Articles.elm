@@ -1,64 +1,58 @@
 module Components.Articles.Articles exposing (..)
 
+import Components.Tags.Tags exposing (Tag(Category, Place))
 import Messages exposing (..)
 import Models exposing (Article, State, Url)
-import Json.Decode as Decode
-import Json.Encode
+import Json.Decode as D
+import Json.Encode as E
 import Http exposing (expectJson, request)
 import Task
 
 
-articleApi : String
-articleApi =
-    "http://localhost:3000/articles"
+api : String
+api =
+    "http://localhost:3000"
 
 
-decodeArticle : Decode.Decoder Article
+decodeArticle : D.Decoder Article
 decodeArticle =
-    Decode.map7 Article
-        (Decode.at [ "id" ] Decode.string)
-        (Decode.at [ "title" ] Decode.string)
-        (Decode.at [ "description" ] Decode.string)
-        (Decode.at [ "body" ] Decode.string)
-        (Decode.at [ "photoThumbnail" ] Decode.string)
-        (Decode.at [ "tags" ] (Decode.list Decode.string))
-        (Decode.at [ "place" ] Decode.string)
+    D.map7 Article
+        (D.at [ "id" ] D.string)
+        (D.at [ "title" ] D.string)
+        (D.at [ "description" ] D.string)
+        (D.at [ "body" ] D.string)
+        (D.at [ "photoThumbnail" ] D.string)
+        (D.at [ "tags" ] <| D.list <| D.map Category D.string)
+        (D.at [ "place" ] <| D.map Place D.string)
 
 
-decodeArticles : Decode.Decoder (List Article)
-decodeArticles =
-    Decode.list decodeArticle
-
-
-encodeArticle : Article -> Json.Encode.Value
+encodeArticle : Article -> E.Value
 encodeArticle article =
-    Json.Encode.object [ ( "body", Json.Encode.string article.body ) ]
+    E.object [ ( "body", E.string article.body ) ]
 
 
-getArticles : String -> Task.Task Http.Error (List Article)
-getArticles url =
-    Http.toTask <| Http.get url decodeArticles
+getArticles : Http.Request (List Article)
+getArticles =
+    Http.get (api ++ "/articles") <| D.list decodeArticle
 
 
+getFilteredArticles =
+    "TODO"
+
+
+getPlaces : Cmd Msg
 getPlaces =
-    let
-        url =
-            "http://localhost:3000/places"
-    in
-        Http.send FetchPlaces <| Http.get url <| Decode.list <| Decode.string
+    Http.send FetchPlaces <| Http.get (api ++ "/places") <| D.list <| D.map Place D.string
 
 
+getCategories : Cmd Msg
 getCategories =
-    let
-        url =
-            "http://localhost:3000/categories"
-    in
-        Http.send FetchCategories <| Http.get url <| Decode.list <| Decode.string
+    Http.send FetchCategories <| Http.get (api ++ "/categories") <| D.list <| D.map Category D.string
 
 
 updateArticles : State -> Article -> Maybe (List Article)
-updateArticles state article =
-    state.articles
+updateArticles { articles } article =
+    articles
         |> Maybe.withDefault []
         |> List.filter (\a -> a.id /= article.id)
         |> (::) article
@@ -73,7 +67,7 @@ patchArticle article =
             request
                 { method = "PATCH"
                 , headers = []
-                , url = articleApi ++ "/" ++ article.id
+                , url = api ++ "/articles" ++ "/" ++ article.id
                 , body = Http.jsonBody <| encodeArticle article
                 , expect = expectJson decodeArticle
                 , timeout = Nothing
@@ -85,4 +79,4 @@ patchArticle article =
                 Cmd.none
 
             Just article ->
-                Http.send UpdateArticle (put article)
+                Http.send UpdateArticle <| put article

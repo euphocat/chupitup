@@ -1,6 +1,6 @@
 module Blog exposing (..)
 
-import Components.Articles.Articles exposing (articleApi, getArticles, getCategories, getPlaces)
+import Components.Articles.Articles exposing (api, getArticles, getCategories, getPlaces)
 import Messages exposing (Msg(FetchArticles, NoOp, SetEditor, UpdateUrl))
 import Models exposing (State, newState)
 import Update exposing (update)
@@ -31,7 +31,7 @@ init location =
 
         requests : List (Cmd Msg)
         requests =
-            [ Task.attempt FetchArticles <| Task.map setEditor <| getArticles articleApi
+            [ Task.attempt FetchArticles <| Task.map setEditor <| Http.toTask getArticles
             , getPlaces
             , getCategories
             ]

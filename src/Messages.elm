@@ -4,7 +4,6 @@ import Components.Tags.Tags exposing (Tag)
 import Http
 import Models exposing (Article)
 import Routing.Routes exposing (Route)
-import Set exposing (Set)
 
 
 type alias ArticleId =
@@ -13,7 +12,7 @@ type alias ArticleId =
 
 type Msg
     = UpdateUrl Route
-    | ToggleVisibleTag String
+    | ToggleVisibleTag Tag
     | EditorContent String
     | SaveEditor
     | SetEditor ArticleId

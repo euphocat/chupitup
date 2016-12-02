@@ -10,6 +10,6 @@ cd $DIR/..
 
 ./bin/build.sh
 
-
+docker start my-mongo-dev
 
 live-server build/ --entry-file=index.html & nodemon ./server/index.js

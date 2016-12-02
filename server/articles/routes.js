@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const _ = require('lodash');
 
 module.exports = function (server, articles) {
 
@@ -14,8 +15,15 @@ module.exports = function (server, articles) {
             }
         },
         handler: function (request, reply) {
+            const {places, categories} = request.query;
+
+            const placeFilter = ({place}) => places ? _.includes(places, place) : true;
+            const tagsFilter = ({tags}) => categories ? _.some(categories, _.partial(_.includes, tags)) : true;
+
             articles
                 .list()
+                .then(articles => articles.filter(placeFilter))
+                .then(articles => articles.filter(tagsFilter))
                 .then(reply);
         }
     });

@@ -1,13 +1,12 @@
 module Update exposing (..)
 
-import Components.Articles.Articles exposing (patchArticle, updateArticles)
-import Components.Tags.Tags exposing (toggleVisibleTag)
+import Components.Articles.Articles exposing (getArticles, patchArticle, updateArticles)
+import Components.Tags.Tags exposing (Tag(Category, Place), toggleVisibleTag)
 import Messages exposing (..)
 import Models exposing (Article, State)
 import Notifications exposing (notify)
 import Routing.Routes exposing (..)
 import Views.Article exposing (findArticle)
-import Set
 
 
 updateEditor : Maybe Article -> String -> Maybe Article
@@ -22,12 +21,15 @@ updateEditor editor content =
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
-    case msg of
+    case Debug.log "message" msg of
         NoOp ->
             ( state, Cmd.none )
 
-        ToggleVisibleTag tag ->
-            ( { state | visibleTags = toggleVisibleTag tag state.visibleTags }, Cmd.none )
+        ToggleVisibleTag (Place tag) ->
+            ( { state | visiblePlaces = toggleVisibleTag (Place tag) state.visiblePlaces }, Cmd.none )
+
+        ToggleVisibleTag (Category tag) ->
+            ( { state | visibleCategories = toggleVisibleTag (Category tag) state.visibleCategories }, Cmd.none )
 
         EditorContent content ->
             ( { state | editor = updateEditor state.editor content }, Cmd.none )
@@ -76,10 +78,10 @@ update msg state =
             ( state, Cmd.none )
 
         FetchPlaces (Ok places) ->
-            ( { state | places = Just <| Set.fromList places }, Cmd.none )
+            ( { state | places = Just places }, Cmd.none )
 
         FetchCategories (Err error) ->
             ( state, Cmd.none )
 
         FetchCategories (Ok categories) ->
-            ( { state | categories = Just <| Set.fromList categories }, Cmd.none )
+            ( { state | categories = Just categories }, Cmd.none )

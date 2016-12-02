@@ -1,8 +1,7 @@
 module Models exposing (..)
 
-import Components.Tags.Tags exposing (Tag)
+import Components.Tags.Tags exposing (..)
 import Routing.Routes exposing (Route)
-import Set exposing (Set)
 
 
 type alias Url =
@@ -15,7 +14,7 @@ type alias Article =
     , description : String
     , body : String
     , photoThumbnail : Url
-    , tags : List Tag
+    , categories : List Tag
     , place : Tag
     }
 
@@ -24,9 +23,10 @@ type alias State =
     { route : Route
     , editor : Maybe Article
     , articles : Maybe (List Article)
-    , categories : Maybe (Set Tag)
-    , places : Maybe (Set Tag)
-    , visibleTags : Set Tag
+    , categories : Maybe (List Tag)
+    , places : Maybe (List Tag)
+    , visiblePlaces : List Tag
+    , visibleCategories : List Tag
     }
 
 
@@ -37,5 +37,6 @@ newState route =
     , articles = Nothing
     , categories = Nothing
     , places = Nothing
-    , visibleTags = Set.empty
+    , visiblePlaces = []
+    , visibleCategories = []
     }
