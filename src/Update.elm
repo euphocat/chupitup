@@ -1,7 +1,6 @@
 module Update exposing (..)
 
-import Components.Articles.Articles exposing (getArticles, patchArticle, updateArticles)
-import Components.Tags.Tags exposing (Tag(Category, Place), toggleVisibleTag)
+import Components.Articles.Articles exposing (getArticles, getFilteredArticles, patchArticle, updateArticles)
 import Messages exposing (..)
 import Models exposing (Article, State)
 import Notifications exposing (notify)
@@ -21,15 +20,14 @@ updateEditor editor content =
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
-    case Debug.log "message" msg of
+    case {- Debug.log "message" -} msg of
         NoOp ->
             ( state, Cmd.none )
 
-        ToggleVisibleTag (Place tag) ->
-            ( { state | visiblePlaces = toggleVisibleTag (Place tag) state.visiblePlaces }, Cmd.none )
-
-        ToggleVisibleTag (Category tag) ->
-            ( { state | visibleCategories = toggleVisibleTag (Category tag) state.visibleCategories }, Cmd.none )
+        ToggleVisibleTag tag ->
+            ( state
+            , getFilteredArticles ( state.visiblePlaces, state.visibleCategories ) tag
+            )
 
         EditorContent content ->
             ( { state | editor = updateEditor state.editor content }, Cmd.none )
@@ -60,6 +58,14 @@ update msg state =
                 | articles = Just articles
                 , editor = findArticle (Just articles) (Maybe.withDefault "" id)
               }
+            , Cmd.none
+            )
+
+        FetchFilteredArticles (Err error) ->
+            ( state, Cmd.none )
+
+        FetchFilteredArticles (Ok ( articles, ( visiblePlaces, visibleCategories ) )) ->
+            ( { state | articles = Just articles, visiblePlaces = visiblePlaces, visibleCategories = visibleCategories }
             , Cmd.none
             )
 

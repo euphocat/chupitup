@@ -21,6 +21,7 @@ type Msg
     | EditArticle ArticleId
     | ShowArticle ArticleId
     | FetchArticles (Result Http.Error ( List Article, Maybe ArticleId ))
+    | FetchFilteredArticles (Result Http.Error ( List Article, ( List Tag, List Tag ) ))
     | UpdateArticle (Result Http.Error Article)
     | FetchPlaces (Result Http.Error (List Tag))
     | FetchCategories (Result Http.Error (List Tag))

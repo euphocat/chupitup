@@ -56,9 +56,12 @@ viewArticle { id, title, description, photoThumbnail } =
 
 viewArticles : List Article -> List (Html Msg)
 viewArticles articles =
-    articles
-        |> List.sortBy .id
-        |> List.map viewArticle
+    if List.isEmpty articles then
+        [ div [] [ text "Aucun endroit sympa n'existe avec les critères souhaités :(" ] ]
+    else
+        articles
+            |> List.sortBy .id
+            |> List.map viewArticle
 
 
 viewTags : Maybe (List Tag) -> List Tag -> List (Html Msg)
