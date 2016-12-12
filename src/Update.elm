@@ -51,7 +51,11 @@ update msg state =
             ( { state | editor = findArticle state.articles id }, Cmd.none )
 
         FetchArticles (Err error) ->
-            ( state, Cmd.none )
+            let
+                _ =
+                    Debug.log "Error articles" error
+            in
+                ( state, Cmd.none )
 
         FetchArticles (Ok ( articles, id )) ->
             ( { state
