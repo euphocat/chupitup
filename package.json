@@ -23,7 +23,8 @@
   "devDependencies": {
     "autoless": "^0.1.7",
     "less": "^2.7.1",
-    "node-notifier": "^4.6.1"
+    "node-notifier": "^4.6.1",
+    "uglify-js": "^2.7.5"
   },
   "dependencies": {
     "Notify": "github:mlaritz/Vanilla-Notify",

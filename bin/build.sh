@@ -6,6 +6,7 @@ cd bin
 
 # include variables
 source ./vars.sh
+source ./colors.sh
 
 # add the node_modules bin to the current PATH
 PATH="$PATH:$PROJECT_DIR/node_modules/.bin"
@@ -27,5 +28,7 @@ cp ${PROJECT_DIR}/node_modules/Notify/dist/vanilla-notify.js ${BUILD_DIR}/js/
 
 end=`date +%s%N`
 runtime=$(($((end-start))/1000000))
+BUILD_DONE="Build is done in $runtime ms"
 
-notify -t "Elm blog Chupitup" -m "Build is done in $runtime ms"
+success "$BUILD_DONE"
+notify -t "Elm blog Chupitup" -m "${BUILD_DONE}"
