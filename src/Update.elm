@@ -1,9 +1,8 @@
 module Update exposing (..)
 
-import Components.Articles.Articles exposing (getArticles, getFilteredArticles, patchArticle, updateArticles)
+import Components.Articles.Articles exposing (getArticles, getFilteredArticles)
 import Messages exposing (..)
 import Models exposing (Article, State)
-import Notifications exposing (notify)
 import Routing.Routes exposing (..)
 import Views.Article exposing (findArticle)
 
@@ -24,16 +23,10 @@ update msg state =
         NoOp ->
             ( state, Cmd.none )
 
-        ToggleVisibleTag tag ->
+        ToggleVisibleTag tagType tag ->
             ( state
-            , getFilteredArticles ( state.visiblePlaces, state.visibleCategories ) tag
+            , getFilteredArticles ( state.visiblePlaces, state.visibleCategories ) tagType tag
             )
-
-        EditorContent content ->
-            ( { state | editor = updateEditor state.editor content }, Cmd.none )
-
-        SaveEditor ->
-            ( state, patchArticle state.editor )
 
         ShowArticle articleId ->
             ( state, navigationToRoute <| ArticleRoute articleId )
@@ -43,12 +36,6 @@ update msg state =
 
         ShowAdmin ->
             ( state, navigationToRoute AdminHome )
-
-        EditArticle id ->
-            ( { state | editor = findArticle state.articles id }, navigationToRoute <| AdminArticle id )
-
-        SetEditor id ->
-            ( { state | editor = findArticle state.articles id }, Cmd.none )
 
         FetchArticles (Err error) ->
             let
@@ -73,16 +60,8 @@ update msg state =
             , Cmd.none
             )
 
-        UpdateArticle (Err error) ->
-            ( state, Cmd.none )
-
         UpdateUrl route ->
             ( { state | route = route }, Cmd.none )
-
-        UpdateArticle (Ok article) ->
-            ( { state | articles = updateArticles state article }
-            , notify "Article modifié" Notifications.Success
-            )
 
         FetchPlaces (Err error) ->
             ( state, Cmd.none )

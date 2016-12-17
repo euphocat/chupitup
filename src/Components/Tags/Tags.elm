@@ -1,9 +1,10 @@
 module Components.Tags.Tags exposing (..)
 
 
-type Tag
-    = Place String
-    | Category String
+type alias Tag =
+    { id : String
+    , name : String
+    }
 
 
 toggleVisibleTag : Tag -> List Tag -> List Tag
@@ -18,13 +19,3 @@ toggleVisibleTag tag visibleTags =
 isTagActive : Tag -> List Tag -> Bool
 isTagActive =
     List.member
-
-
-tagToString : Tag -> String
-tagToString tag =
-    case tag of
-        Place tagPayload ->
-            tagPayload
-
-        Category tagPayload ->
-            tagPayload

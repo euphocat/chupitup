@@ -1,7 +1,5 @@
 module View exposing (..)
 
-import Admin.Views.Admin exposing (viewAdmin)
-import Admin.Views.Editor exposing (viewEditor)
 import Html exposing (Html, text, div)
 import Html.Attributes exposing (class)
 import Messages exposing (Msg)
@@ -15,12 +13,6 @@ import Views.Header exposing (..)
 view : State -> Html Msg
 view state =
     case state.route of
-        AdminArticle id ->
-            div [] (viewEditor id state)
-
-        AdminHome ->
-            div [] (viewAdmin state)
-
         _ ->
             div [ class "pure-g wrapper" ]
                 [ viewHeader, div [ class "pure-u-1" ] (viewBody state) ]

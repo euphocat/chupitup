@@ -7,18 +7,12 @@
     <link rel="stylesheet" href="/css/pure-min.css">
     <link rel="stylesheet" href="/css/grids-responsive-min.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/vanilla-notify.css">
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<script src="/js/vanilla-notify.js"></script>
 <script src="/Blog.min.js"></script>
 <script>
-    vNotify.options.fadeInDuration = 200;
-    var app = Elm.Blog.fullscreen();
-    app.ports.sendNotification.subscribe(function(notification) {
-        vNotify.success({text: notification.message, /*title:'title',*/});
-    });
+    Elm.Blog.fullscreen();
 </script>
 </body>
 </html>

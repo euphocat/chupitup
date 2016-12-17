@@ -19,5 +19,5 @@ export COLOR_GRAY='\e[0;30m'
 export COLOR_LIGHT_GRAY='\e[0;37m'
 
 function success {
-    echo -e "${COLOR_YELLOW}★${COLOR_LIGHT_BLUE} ${1} success ${COLOR_YELLOW}★${COLOR_NC}"
+    echo -e "${COLOR_YELLOW}☆★☆${COLOR_LIGHT_BLUE} ${1} success ${COLOR_YELLOW}☆★☆${COLOR_NC}"
 }

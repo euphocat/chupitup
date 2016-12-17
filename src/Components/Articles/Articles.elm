@@ -1,7 +1,7 @@
 module Components.Articles.Articles exposing (..)
 
-import Components.Tags.Tags exposing (Tag(Category, Place), tagToString, toggleVisibleTag)
-import Contentful exposing (decodeArticles, decodeEntries)
+import Components.Tags.Tags exposing (Tag, toggleVisibleTag)
+import Contentful exposing (decodeArticles)
 import Messages exposing (..)
 import Models exposing (Article, State, Url)
 import Json.Decode as D
@@ -9,44 +9,6 @@ import Json.Encode as E
 import Http exposing (expectJson, request)
 import Task
 import QueryString exposing (QueryString)
-
-
-api : String
-api =
-    "http://localhost:3000"
-
-
-
-{- decodeArticle : D.Decoder Article
-   decodeArticle =
-       D.map7 Article
-           (D.at [ "id" ] D.string)
-           (D.at [ "title" ] D.string)
-           (D.at [ "description" ] D.string)
-           (D.at [ "body" ] D.string)
-           (D.at [ "photoThumbnail" ] D.string)
-           (D.at [ "tags" ] <| D.list <| D.map Category D.string)
-           (D.at [ "place" ] <| D.map Place D.string)
--}
-
-
-decodeArticle : D.Decoder Article
-decodeArticle =
-    let
-        categoriesDecoder =
-            (D.field "items" <| D.index 0 <| D.at [ "fields", "categories" ] <| D.list <| D.at [ "sys", "id" ] <| D.map Category D.string)
-
-        placeDecoder =
-            (D.at [ "place" ] <| D.map Place D.string)
-    in
-        D.map7 Article
-            (D.field "items" <| D.index 0 <| D.at [ "sys", "id" ] <| D.string)
-            (D.field "items" <| D.index 0 <| D.at [ "fields", "title" ] <| D.string)
-            (D.field "items" <| D.index 0 <| D.at [ "fields", "description" ] <| D.string)
-            (D.field "items" <| D.index 0 <| D.at [ "fields", "body" ] <| D.string)
-            (D.at [ "includes", "Assets" ] <| D.index 0 <| D.at [ "fields", "file", "url" ] <| D.string)
-            categoriesDecoder
-            placeDecoder
 
 
 encodeArticle : Article -> E.Value
@@ -63,32 +25,37 @@ getArticles =
         get path decodeArticles
 
 
-getFilteredArticles : ( List Tag, List Tag ) -> Tag -> Cmd Msg
-getFilteredArticles ( visiblePlaces, visibleCategories ) tag =
+getFilteredArticles : ( List Tag, List Tag ) -> TagType -> Tag -> Cmd Msg
+getFilteredArticles ( visiblePlaces, visibleCategories ) tagType tag =
     let
-        formatTags key tags =
+        path =
+            "/entries"
+
+        formatTags tags =
             tags
-                |> List.map tagToString
-                |> List.map (\s -> ( key, s ))
+                |> List.map .id
+                |> List.foldl (++) ""
 
         addOne : ( String, String ) -> QueryString -> QueryString
         addOne ( key, value ) =
             QueryString.add key value
 
         tags =
-            case tag of
-                Place _ ->
+            case tagType of
+                Place ->
                     ( toggleVisibleTag tag visiblePlaces, visibleCategories )
 
-                Category _ ->
+                Category ->
                     ( visiblePlaces, toggleVisibleTag tag visibleCategories )
 
         querystring ( places, categories ) =
-            ((formatTags "places" places) ++ (formatTags "categories" categories))
-                |> List.foldl addOne QueryString.empty
+            QueryString.empty
+                |> QueryString.add "fields.place.sys.id" (formatTags places)
+                |> QueryString.add "fields.categories.sys.id" (formatTags categories)
+                |> QueryString.add "content_type" "articles"
                 |> QueryString.render
     in
-        (Http.toTask <| Http.get (api ++ "/articles" ++ querystring tags) <| D.list decodeArticle)
+        (Http.toTask <| get (path ++ (querystring tags)) decodeArticles)
             |> Task.map (\articles -> ( articles, tags ))
             |> Task.attempt FetchFilteredArticles
 
@@ -109,54 +76,26 @@ get path decoder =
 getCategories : Cmd Msg
 getCategories =
     let
-        decodeCategories =
-            D.field "items" <| D.list <| D.at [ "fields", "title" ] <| D.map Category D.string
-
         path =
             "/entries?content_type=categories"
     in
-        Http.send FetchCategories <| get path decodeCategories
+        Http.send FetchCategories <| get path decodeTags
 
 
 getPlaces : Cmd Msg
 getPlaces =
     let
-        decodePlaces =
-            D.field "items" <| D.list <| D.at [ "fields", "title" ] <| D.map Place D.string
-
         path =
             "/entries?content_type=places"
     in
-        Http.send FetchPlaces <| get path decodePlaces
+        Http.send FetchPlaces <| get path decodeTags
 
 
-updateArticles : State -> Article -> Maybe (List Article)
-updateArticles { articles } article =
-    articles
-        |> Maybe.withDefault []
-        |> List.filter (\a -> a.id /= article.id)
-        |> (::) article
-        |> Just
+decodeTags =
+    D.field "items" <| D.list decodeTag
 
 
-patchArticle : Maybe Article -> Cmd Msg
-patchArticle article =
-    let
-        put : Article -> Http.Request Article
-        put article =
-            request
-                { method = "PATCH"
-                , headers = []
-                , url = api ++ "/articles" ++ "/" ++ article.id
-                , body = Http.jsonBody <| encodeArticle article
-                , expect = expectJson decodeArticle
-                , timeout = Nothing
-                , withCredentials = False
-                }
-    in
-        case article of
-            Nothing ->
-                Cmd.none
-
-            Just article ->
-                Http.send UpdateArticle <| put article
+decodeTag =
+    D.map2 Tag
+        (D.at [ "sys", "id" ] D.string)
+        (D.at [ "fields", "title" ] D.string)

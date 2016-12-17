@@ -1,6 +1,6 @@
 module Contentful exposing (..)
 
-import Components.Tags.Tags exposing (Tag(Category, Place))
+import Components.Tags.Tags exposing (Tag)
 import Json.Decode as D
 import List.Extra exposing (find)
 import Models exposing (Article, Url)
@@ -9,7 +9,7 @@ import Models exposing (Article, Url)
 type alias Entries =
     { sys : Sys
     , items : List Item
-    , includes : Includes
+    , includes : Maybe Includes
     }
 
 
@@ -38,43 +38,68 @@ type UnderSys
 
 getPlace : Entries -> Sys -> Tag
 getPlace entries sys =
-    find (\entry -> sys.id == entry.sys.id) entries.includes.entry
-        |> Maybe.map .fields
-        |> Maybe.map (D.decodeValue <| D.field "title" <| D.map Place D.string)
-        |> Maybe.map (Result.withDefault <| Place "")
-        |> Maybe.withDefault (Place "")
+    case entries.includes of
+        Just includes ->
+            find (\entry -> sys.id == entry.sys.id) includes.entry
+                |> Maybe.map .fields
+                |> Maybe.map (D.decodeValue <| D.field "title" D.string)
+                |> Maybe.map (Result.withDefault "")
+                |> Maybe.withDefault ""
+                |> (\title -> { name = title, id = Maybe.withDefault "" sys.id })
+
+        Nothing ->
+            { id = "", name = "" }
 
 
 getThumbnail : Entries -> Sys -> Url
 getThumbnail entries sys =
-    find (\entry -> sys.id == entry.sys.id) entries.includes.assets
-        |> Maybe.map .fields
-        |> Maybe.map (D.decodeValue <| D.at [ "file", "url" ] D.string)
-        |> Maybe.map (Result.withDefault "")
-        |> Maybe.withDefault ""
+    case entries.includes of
+        Just includes ->
+            find (\entry -> sys.id == entry.sys.id) includes.assets
+                |> Maybe.map .fields
+                |> Maybe.map (D.decodeValue <| D.at [ "file", "url" ] D.string)
+                |> Maybe.map (Result.withDefault "")
+                |> Maybe.withDefault ""
+
+        Nothing ->
+            ""
 
 
 getCategory : Entries -> Sys -> Tag
 getCategory entries sys =
-    find (\entry -> sys.id == entry.sys.id) entries.includes.entry
-        |> Maybe.map .fields
-        |> Maybe.map (D.decodeValue <| D.field "title" <| D.map Category D.string)
-        |> Maybe.map (Result.withDefault <| Category "")
-        |> Maybe.withDefault (Category "")
+    case entries.includes of
+        Just includes ->
+            find (\entry -> sys.id == entry.sys.id) includes.entry
+                |> Maybe.map .fields
+                |> Maybe.map (D.decodeValue <| D.field "title" D.string)
+                |> Maybe.map (Result.withDefault "")
+                |> Maybe.withDefault ("")
+                |> (\title -> { name = title, id = Maybe.withDefault "" sys.id })
+
+        Nothing ->
+            { id = "", name = "" }
+
+
+decodeArticle : Entries -> D.Decoder Article
+decodeArticle entries =
+    D.map7 Article
+        (D.at [ "sys", "id" ] D.string)
+        (D.at [ "fields", "title" ] D.string)
+        (D.at [ "fields", "description" ] D.string)
+        (D.at [ "fields", "body" ] D.string)
+        (D.map (getThumbnail entries) <| D.at [ "fields", "thumbnail", "sys" ] decodeSys)
+        (D.at [ "fields", "categories" ] <| D.list <| D.field "sys" <| D.map (getCategory entries) decodeSys)
+        (D.map (getPlace entries) <| D.at [ "fields", "place", "sys" ] decodeSys)
 
 
 decodeArticles : D.Decoder (List Article)
 decodeArticles =
     let
-        decodeArticle entries =
-            D.map7 Article
-                (D.at [ "sys", "id" ] D.string)
-                (D.at [ "fields", "title" ] D.string)
-                (D.at [ "fields", "description" ] D.string)
-                (D.at [ "fields", "body" ] D.string)
-                (D.map (getThumbnail entries) <| D.at [ "fields", "thumbnail", "sys" ] decodeSys)
-                (D.at [ "fields", "categories" ] <| D.list <| D.field "sys" <| D.map (getCategory entries) decodeSys)
-                (D.map (getPlace entries) <| D.at [ "fields", "place", "sys" ] decodeSys)
+        decodeArticleWithEntries entries =
+            if List.isEmpty entries.items then
+                (\_ -> D.succeed [])
+            else
+                (\entries -> D.field "items" <| D.list <| decodeArticle entries)
     in
         decodeEntries
             |> D.andThen (\entries -> D.field "items" <| D.list <| decodeArticle entries)
@@ -85,7 +110,7 @@ decodeEntries =
     D.map3 Entries
         (D.field "sys" decodeSys)
         (D.field "items" <| D.list <| decodeItem)
-        (D.field "includes" decodeIncludes)
+        (D.maybe <| D.field "includes" decodeIncludes)
 
 
 decodeIncludes : D.Decoder Includes
