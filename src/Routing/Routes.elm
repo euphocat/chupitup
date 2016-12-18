@@ -10,8 +10,6 @@ type alias ArticleId =
 type Route
     = HomeRoute
     | ArticleRoute ArticleId
-    | AdminHome
-    | AdminArticle ArticleId
     | NotFound
 
 
@@ -22,15 +20,9 @@ navigationToRoute route =
 
 reverse : Route -> String
 reverse route =
-    case Debug.log "route" route of
+    case {- Debug.log "route" -} route of
         ArticleRoute articleId ->
             "/article/" ++ articleId
-
-        AdminHome ->
-            "/admin"
-
-        AdminArticle articleId ->
-            "/admin/article/" ++ articleId
 
         _ ->
             "/"

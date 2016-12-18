@@ -9,11 +9,10 @@ import Routing.Routes exposing (Route(HomeRoute), reverse)
 
 viewHeader : Html Msg
 viewHeader =
-    header [ class "pure-u-1" ]
-        [ h1 [ class "" ]
-            [ a [ onClick ShowHome, href (reverse HomeRoute) ] [ text "Chupitup" ] ]
-        , div [ class "pure-u-1 wrapper-photo" ]
-            [ div [ class "landscape-photo" ]
-                [ div [] [] ]
-            ]
+    header
+        [ class "pure-u-1" ]
+        [ h1 [] [ a [ onClick ShowHome, href (reverse HomeRoute) ] [ text "Chupitup" ] ]
+        , div
+            [ class "pure-u-1 wrapper-photo" ]
+            [ div [ class "landscape-photo" ] [ div [] [] ] ]
         ]

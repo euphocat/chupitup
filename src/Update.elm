@@ -7,16 +7,6 @@ import Routing.Routes exposing (..)
 import Views.Article exposing (findArticle)
 
 
-updateEditor : Maybe Article -> String -> Maybe Article
-updateEditor editor content =
-    case editor of
-        Nothing ->
-            editor
-
-        Just article ->
-            Just { article | body = content }
-
-
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case {- Debug.log "message" -} msg of
@@ -34,9 +24,6 @@ update msg state =
         ShowHome ->
             ( state, navigationToRoute HomeRoute )
 
-        ShowAdmin ->
-            ( state, navigationToRoute AdminHome )
-
         FetchArticles (Err error) ->
             let
                 _ =
@@ -44,13 +31,8 @@ update msg state =
             in
                 ( state, Cmd.none )
 
-        FetchArticles (Ok ( articles, id )) ->
-            ( { state
-                | articles = Just articles
-                , editor = findArticle (Just articles) (Maybe.withDefault "" id)
-              }
-            , Cmd.none
-            )
+        FetchArticles (Ok articles) ->
+            ( { state | articles = Just articles }, Cmd.none )
 
         FetchFilteredArticles (Err error) ->
             ( state, Cmd.none )

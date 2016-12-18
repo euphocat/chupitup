@@ -9,11 +9,10 @@ import Models exposing (Article, State)
 
 findArticle : Maybe (List Article) -> String -> Maybe Article
 findArticle articles id =
-    List.head
-        (List.filter
-            (\a -> a.id == id)
-            (Maybe.withDefault [] articles)
-        )
+    articles
+        |> Maybe.withDefault []
+        |> List.filter (\a -> a.id == id)
+        |> List.head
 
 
 renderArticle : Article -> List (Html Msg)
@@ -40,8 +39,8 @@ viewArticle articleId state =
 
             Nothing ->
                 [ aside [ class "pure-u-1" ]
-                    [ div [ class "error-message" ]
-                        [ text ("Error: no article found with id " ++ (toString articleId))
-                        ]
+                    [ div
+                        [ class "error-message" ]
+                        [ text <| "Error: no article found with id " ++ (toString articleId) ]
                     ]
                 ]

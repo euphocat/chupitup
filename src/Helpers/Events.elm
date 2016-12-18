@@ -7,11 +7,7 @@ import Json.Decode as Json
 
 onClick : msg -> Attribute msg
 onClick message =
-    let
-        one =
-            Debug.log (toString message)
-    in
-        onWithOptions "click" preventDefault (Json.succeed message)
+    onWithOptions "click" preventDefault (Json.succeed message)
 
 
 preventDefault : Options

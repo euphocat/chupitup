@@ -1,19 +1,13 @@
-module Components.Articles.Articles exposing (..)
+module Components.Articles.Articles exposing (getArticles, getFilteredArticles, getPlaces, getCategories)
 
 import Components.Tags.Tags exposing (Tag, toggleVisibleTag)
 import Contentful exposing (decodeArticles)
-import Messages exposing (..)
-import Models exposing (Article, State, Url)
+import Messages exposing (Msg(FetchCategories, FetchFilteredArticles, FetchPlaces), TagType(Category, Place))
+import Models exposing (Article, State)
 import Json.Decode as D
-import Json.Encode as E
 import Http exposing (expectJson, request)
 import Task
 import QueryString exposing (QueryString)
-
-
-encodeArticle : Article -> E.Value
-encodeArticle article =
-    E.object [ ( "body", E.string article.body ) ]
 
 
 getArticles : Http.Request (List Article)
@@ -28,17 +22,10 @@ getArticles =
 getFilteredArticles : ( List Tag, List Tag ) -> TagType -> Tag -> Cmd Msg
 getFilteredArticles ( visiblePlaces, visibleCategories ) tagType tag =
     let
-        path =
-            "/entries"
-
         formatTags tags =
             tags
                 |> List.map .id
-                |> List.foldl (++) ""
-
-        addOne : ( String, String ) -> QueryString -> QueryString
-        addOne ( key, value ) =
-            QueryString.add key value
+                |> String.join ","
 
         tags =
             case tagType of
@@ -48,29 +35,42 @@ getFilteredArticles ( visiblePlaces, visibleCategories ) tagType tag =
                 Category ->
                     ( visiblePlaces, toggleVisibleTag tag visibleCategories )
 
+        addNotEmpty key value querystring =
+            if value /= "" then
+                QueryString.add key value querystring
+            else
+                querystring
+
         querystring ( places, categories ) =
             QueryString.empty
-                |> QueryString.add "fields.place.sys.id" (formatTags places)
-                |> QueryString.add "fields.categories.sys.id" (formatTags categories)
+                |> addNotEmpty "fields.place.sys.id[in]" (formatTags places)
+                |> addNotEmpty "fields.categories.sys.id[in]" (formatTags categories)
                 |> QueryString.add "content_type" "articles"
                 |> QueryString.render
     in
-        (Http.toTask <| get (path ++ (querystring tags)) decodeArticles)
+        (Http.toTask <| get ("/entries" ++ (querystring tags)) decodeArticles)
             |> Task.map (\articles -> ( articles, tags ))
             |> Task.attempt FetchFilteredArticles
 
 
 get : String -> D.Decoder a -> Http.Request a
 get path decoder =
-    request
-        { method = "GET"
-        , headers = [ Http.header "Authorization" "Bearer 1cad074517694d45ea6e972c4a2a0c716b7beb45daf02c260f1d7879a43f14d1" ]
-        , url = "https://cdn.contentful.com/spaces/rqclkj9xcpx2" ++ path
-        , body = Http.emptyBody
-        , expect = expectJson decoder
-        , timeout = Nothing
-        , withCredentials = False
-        }
+    let
+        accessToken =
+            "1cad074517694d45ea6e972c4a2a0c716b7beb45daf02c260f1d7879a43f14d1"
+
+        apiUrl =
+            "https://cdn.contentful.com/spaces/rqclkj9xcpx2"
+    in
+        request
+            { method = "GET"
+            , headers = [ Http.header "Authorization" <| "Bearer " ++ accessToken ]
+            , url = apiUrl ++ path
+            , body = Http.emptyBody
+            , expect = expectJson decoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
 
 
 getCategories : Cmd Msg

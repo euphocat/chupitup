@@ -10,7 +10,7 @@ import Platform.Cmd
 import Task exposing (andThen, succeed)
 import Http
 import Routing.Parsers exposing (parse)
-import Routing.Routes exposing (Route(AdminArticle, ArticleRoute))
+import Routing.Routes exposing (Route(ArticleRoute))
 
 
 init : Navigation.Location -> ( State, Cmd Msg )
@@ -20,18 +20,9 @@ init location =
         route =
             parse location
 
-        setEditor : articles -> ( articles, Maybe Routing.Routes.ArticleId )
-        setEditor articles =
-            case route of
-                AdminArticle id ->
-                    ( articles, Just id )
-
-                _ ->
-                    ( articles, Nothing )
-
         requests : List (Cmd Msg)
         requests =
-            [ Task.attempt FetchArticles <| Task.map setEditor <| Http.toTask getArticles
+            [ Task.attempt FetchArticles <| Http.toTask getArticles
             , getPlaces
             , getCategories
             ]

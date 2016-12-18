@@ -19,9 +19,8 @@ type Msg
     = UpdateUrl Route
     | ToggleVisibleTag TagType Tag
     | ShowHome
-    | ShowAdmin
     | ShowArticle ArticleId
-    | FetchArticles (Result Http.Error ( List Article, Maybe ArticleId ))
+    | FetchArticles (Result Http.Error (List Article))
     | FetchFilteredArticles (Result Http.Error ( List Article, ( List Tag, List Tag ) ))
     | FetchPlaces (Result Http.Error (List Tag))
     | FetchCategories (Result Http.Error (List Tag))

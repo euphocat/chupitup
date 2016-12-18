@@ -28,6 +28,4 @@ routeParser =
     oneOf
         [ map HomeRoute homeParser
         , map ArticleRoute (s "article" </> string)
-        , map AdminArticle (s "admin" </> s "article" </> string)
-        , map AdminHome (s "admin")
         ]

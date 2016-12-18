@@ -39,17 +39,18 @@ linkToArticle id =
 
 viewArticle : Article -> Html Msg
 viewArticle { id, title, description, photoThumbnail } =
-    article [ class "pure-u-5-12" ]
-        [ div [ class "post-thumbnail" ]
+    article
+        [ class "pure-u-5-12" ]
+        [ div
+            [ class "post-thumbnail" ]
             [ linkToArticle id
                 [ img [ alt title, src photoThumbnail ] []
                 ]
             ]
-        , div []
-            [ h2 []
-                [ linkToArticle id [ text title ] ]
-            , p []
-                [ linkToArticle id [ text description ] ]
+        , div
+            []
+            [ h2 [] [ linkToArticle id [ text title ] ]
+            , p [] [ linkToArticle id [ text description ] ]
             ]
         ]
 
