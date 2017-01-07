@@ -1,7 +1,7 @@
 module Blog exposing (..)
 
 import Components.Articles.Articles exposing (getArticles, getCategories, getPlaces)
-import Messages exposing (Msg(FetchArticles, NoOp, UpdateUrl))
+import Messages exposing (FetchMsg(FetchArticles), Msg(FetchTask, NoOp, UpdateUrl))
 import Models exposing (State, newState)
 import Update exposing (update)
 import View exposing (view)
@@ -22,7 +22,7 @@ init location =
 
         requests : List (Cmd Msg)
         requests =
-            [ Task.attempt FetchArticles <| Http.toTask getArticles
+            [ Task.attempt (FetchTask << FetchArticles) <| Http.toTask getArticles
             , getPlaces
             , getCategories
             ]
@@ -31,8 +31,8 @@ init location =
 
 
 urlUpdate : Navigation.Location -> Msg
-urlUpdate location =
-    UpdateUrl <| parse location
+urlUpdate =
+    UpdateUrl << parse
 
 
 subscriptions : State -> Sub Msg

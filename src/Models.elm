@@ -12,6 +12,7 @@ type alias Article =
     { id : String
     , title : String
     , description : String
+    , resume : String
     , body : String
     , photoThumbnail : Url
     , categories : List Tag

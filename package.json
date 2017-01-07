@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "./bin/start.sh",
-    "make": "elm make src/Blog.elm --output=build/Blog.js --warn; exit 0;",
+    "make": "./bin/elm-make.sh",
     "build": "./bin/build.sh --no-watch --clean-elm",
     "clean": "rm build/* -Rf & rm elm-stuff/build-artifacts -Rf",
     "less": "lessc less/main.less > build/css/main.css"

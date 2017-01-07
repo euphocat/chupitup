@@ -67,10 +67,11 @@ decodeThumbnail entries sys =
 
 decodeArticle : Entries -> D.Decoder Article
 decodeArticle entries =
-    D.map7 Article
+    D.map8 Article
         (D.at [ "sys", "id" ] D.string)
         (D.at [ "fields", "title" ] D.string)
         (D.at [ "fields", "description" ] D.string)
+        (D.at [ "fields", "resume" ] D.string)
         (D.at [ "fields", "body" ] D.string)
         (D.map (decodeThumbnail entries) <| D.at [ "fields", "thumbnail", "sys" ] decodeSys)
         (D.at [ "fields", "categories" ] <| D.list <| D.field "sys" <| D.map (decodeTag entries) decodeSys)
@@ -84,10 +85,10 @@ decodeArticles =
             if List.isEmpty entries.items then
                 (\_ -> D.succeed [])
             else
-                (\entries -> D.field "items" <| D.list <| decodeArticle entries)
+                D.field "items" << D.list << decodeArticle
     in
         decodeEntries
-            |> D.andThen (\entries -> D.field "items" <| D.list <| decodeArticle entries)
+            |> D.andThen (D.field "items" << D.list << decodeArticle)
 
 
 decodeEntries : D.Decoder Entries

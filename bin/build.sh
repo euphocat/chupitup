@@ -2,8 +2,6 @@
 
 start=`date +%s%N`
 
-echo $PATH
-
 cd bin
 
 # include variables

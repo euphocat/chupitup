@@ -4,7 +4,6 @@ import Components.Articles.Articles exposing (getArticles, getFilteredArticles)
 import Messages exposing (..)
 import Models exposing (Article, State)
 import Routing.Routes exposing (..)
-import Views.Article exposing (findArticle)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -24,6 +23,28 @@ update msg state =
         ShowHome ->
             ( state, navigationToRoute HomeRoute )
 
+        UpdateUrl route ->
+            ( { state | route = route }, Cmd.none )
+
+        FetchTask task ->
+            updateFetch task state
+
+
+updateFetch : FetchMsg -> State -> ( State, Cmd Msg )
+updateFetch msg state =
+    case msg of
+        FetchPlaces (Err error) ->
+            ( state, Cmd.none )
+
+        FetchPlaces (Ok places) ->
+            ( { state | places = Just places }, Cmd.none )
+
+        FetchCategories (Err error) ->
+            ( state, Cmd.none )
+
+        FetchCategories (Ok categories) ->
+            ( { state | categories = Just categories }, Cmd.none )
+
         FetchArticles (Err error) ->
             let
                 _ =
@@ -41,18 +62,3 @@ update msg state =
             ( { state | articles = Just articles, visiblePlaces = visiblePlaces, visibleCategories = visibleCategories }
             , Cmd.none
             )
-
-        UpdateUrl route ->
-            ( { state | route = route }, Cmd.none )
-
-        FetchPlaces (Err error) ->
-            ( state, Cmd.none )
-
-        FetchPlaces (Ok places) ->
-            ( { state | places = Just places }, Cmd.none )
-
-        FetchCategories (Err error) ->
-            ( state, Cmd.none )
-
-        FetchCategories (Ok categories) ->
-            ( { state | categories = Just categories }, Cmd.none )

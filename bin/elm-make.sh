@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cd bin > /dev/null 2>&1
+
 source ./vars.sh
 source ./colors.sh
 
@@ -24,9 +26,6 @@ success "Elm compilation"
 
 uglifyjs build/Blog.js \
         -o build/Blog.min.js \
-        --screw-ie8 \
-        --source-map Blog.min.js.map \
-        --source-map-url Blog.min.js.map \
-        --source-map-root ""
+        --screw-ie8
 
 success "Uglifying"

@@ -16,11 +16,11 @@ findArticle articles id =
 
 
 renderArticle : Article -> List (Html Msg)
-renderArticle { description, title, body } =
+renderArticle { description, title, resume, body } =
     [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-        [ div [ class "tags" ] [ text "test" ] ]
+        [ div [ class "tags" ] [ text resume ] ]
     , div [ class "article-details pure-u-1 pure-u-lg-2-3" ]
-        [ h1 [] [ text title ]
+        [ h1 [] [ text <| title ]
         , div [] [ text description ]
         , Markdown.toHtml [] body
         ]

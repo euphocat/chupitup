@@ -15,13 +15,17 @@ type TagType
     | Category
 
 
+type FetchMsg
+    = FetchArticles (Result Http.Error (List Article))
+    | FetchFilteredArticles (Result Http.Error ( List Article, ( List Tag, List Tag ) ))
+    | FetchPlaces (Result Http.Error (List Tag))
+    | FetchCategories (Result Http.Error (List Tag))
+
+
 type Msg
     = UpdateUrl Route
     | ToggleVisibleTag TagType Tag
     | ShowHome
     | ShowArticle ArticleId
-    | FetchArticles (Result Http.Error (List Article))
-    | FetchFilteredArticles (Result Http.Error ( List Article, ( List Tag, List Tag ) ))
-    | FetchPlaces (Result Http.Error (List Tag))
-    | FetchCategories (Result Http.Error (List Tag))
     | NoOp
+    | FetchTask FetchMsg

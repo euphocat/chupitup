@@ -2,7 +2,7 @@ module Components.Articles.Articles exposing (getArticles, getFilteredArticles, 
 
 import Components.Tags.Tags exposing (Tag, toggleVisibleTag)
 import Contentful exposing (decodeArticles)
-import Messages exposing (Msg(FetchCategories, FetchFilteredArticles, FetchPlaces), TagType(Category, Place))
+import Messages exposing (FetchMsg, FetchMsg(FetchCategories, FetchFilteredArticles, FetchPlaces), Msg(FetchTask), TagType(Category, Place))
 import Models exposing (Article, State)
 import Json.Decode as D
 import Http exposing (expectJson, request)
@@ -50,7 +50,7 @@ getFilteredArticles ( visiblePlaces, visibleCategories ) tagType tag =
     in
         (Http.toTask <| get ("/entries" ++ (querystring tags)) decodeArticles)
             |> Task.map (\articles -> ( articles, tags ))
-            |> Task.attempt FetchFilteredArticles
+            |> Task.attempt (FetchTask << FetchFilteredArticles)
 
 
 get : String -> D.Decoder a -> Http.Request a
@@ -79,7 +79,7 @@ getCategories =
         path =
             "/entries?content_type=categories"
     in
-        Http.send FetchCategories <| get path decodeTags
+        Http.send (FetchTask << FetchCategories) <| get path decodeTags
 
 
 getPlaces : Cmd Msg
@@ -88,13 +88,15 @@ getPlaces =
         path =
             "/entries?content_type=places"
     in
-        Http.send FetchPlaces <| get path decodeTags
+        Http.send (FetchTask << FetchPlaces) <| get path decodeTags
 
 
+decodeTags : D.Decoder (List Tag)
 decodeTags =
     D.field "items" <| D.list decodeTag
 
 
+decodeTag : D.Decoder Tag
 decodeTag =
     D.map2 Tag
         (D.at [ "sys", "id" ] D.string)
