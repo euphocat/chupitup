@@ -27,12 +27,7 @@
     "uglify-js": "^2.7.5"
   },
   "dependencies": {
-    "Notify": "github:mlaritz/Vanilla-Notify",
     "font-awesome": "^4.7.0",
-    "hapi": "^15.2.0",
-    "joi": "^9.2.0",
-    "lodash": "^4.17.2",
-    "mongodb": "^2.2.11",
     "purecss": "^0.6.0"
   }
 }
