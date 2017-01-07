@@ -1,4 +1,4 @@
-module Components.Tags.Tags exposing (..)
+module Components.Tags exposing (..)
 
 
 type alias Tag =

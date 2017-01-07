@@ -1,6 +1,6 @@
-module Components.Articles.Articles exposing (getArticles, getFilteredArticles, getPlaces, getCategories)
+module Components.Articles exposing (getArticles, getFilteredArticles, getPlaces, getCategories)
 
-import Components.Tags.Tags exposing (Tag, toggleVisibleTag)
+import Components.Tags exposing (Tag, toggleVisibleTag)
 import Contentful exposing (decodeArticles)
 import Messages exposing (FetchMsg, FetchMsg(FetchCategories, FetchFilteredArticles, FetchPlaces), Msg(FetchTask), TagType(Category, Place))
 import Models exposing (Article, State)

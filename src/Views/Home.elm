@@ -1,7 +1,8 @@
 module Views.Home exposing (viewHome)
 
 import Helpers.Events exposing (onClick)
-import Components.Tags.Tags exposing (Tag, isTagActive)
+import Components.Tags exposing (Tag, isTagActive)
+import Components.SideBar as SideBar
 import Html exposing (Html, a, article, div, h1, h2, header, img, p, span, text)
 import Html.Attributes exposing (alt, class, classList, href, src)
 import Messages exposing (..)
@@ -25,10 +26,10 @@ viewSideBar : State -> Html Msg
 viewSideBar { places, categories, visiblePlaces, visibleCategories } =
     div
         [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-        [ h2 [] [ text "Filtrer par type d'endroits" ]
-        , div [ class "tags" ] (viewTags Category categories visibleCategories)
-        , h2 [] [ text "Filtrer par lieu" ]
-        , div [ class "tags" ] (viewTags Place places visiblePlaces)
+        [ SideBar.title "Filtrer par type d'endroits"
+        , SideBar.tags Category categories visibleCategories
+        , SideBar.title "Filtrer par lieu"
+        , SideBar.tags Place places visiblePlaces
         ]
 
 
@@ -63,24 +64,3 @@ viewArticles articles =
         articles
             |> List.sortBy .id
             |> List.map viewArticle
-
-
-viewTags : TagType -> Maybe (List Tag) -> List Tag -> List (Html Msg)
-viewTags tagType tags visibleTags =
-    tags
-        |> Maybe.withDefault []
-        |> List.map (tagToLink tagType visibleTags)
-
-
-tagToLink : TagType -> List Tag -> Tag -> Html Msg
-tagToLink tagType visibleTags tag =
-    a
-        [ classList
-            [ ( "pure-button", True )
-            , ( "pure-button-primary"
-              , isTagActive tag visibleTags
-              )
-            ]
-        , onClick <| ToggleVisibleTag tagType tag
-        ]
-        [ text <| tag.name ]

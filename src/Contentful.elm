@@ -1,6 +1,6 @@
 module Contentful exposing (..)
 
-import Components.Tags.Tags exposing (Tag)
+import Components.Tags exposing (Tag)
 import Json.Decode as D
 import List.Extra exposing (find)
 import Models exposing (Article, Url)

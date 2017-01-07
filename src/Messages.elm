@@ -1,6 +1,6 @@
 module Messages exposing (..)
 
-import Components.Tags.Tags exposing (Tag)
+import Components.Tags exposing (Tag)
 import Http
 import Models exposing (Article)
 import Routing.Routes exposing (Route)

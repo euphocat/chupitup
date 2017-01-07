@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Components.Articles.Articles exposing (getArticles, getFilteredArticles)
+import Components.Articles exposing (getArticles, getFilteredArticles)
 import Messages exposing (..)
 import Models exposing (Article, State)
 import Routing.Routes exposing (..)

@@ -1,6 +1,6 @@
 module Blog exposing (..)
 
-import Components.Articles.Articles exposing (getArticles, getCategories, getPlaces)
+import Components.Articles exposing (getArticles, getCategories, getPlaces)
 import Messages exposing (FetchMsg(FetchArticles), Msg(FetchTask, NoOp, UpdateUrl))
 import Models exposing (State, newState)
 import Update exposing (update)

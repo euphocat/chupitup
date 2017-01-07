@@ -1,6 +1,6 @@
 module Models exposing (..)
 
-import Components.Tags.Tags exposing (..)
+import Components.Tags exposing (..)
 import Routing.Routes exposing (Route)
 
 
