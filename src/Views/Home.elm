@@ -1,7 +1,7 @@
 module Views.Home exposing (viewHome)
 
+import Components.Tags exposing (TagKind(Category, Place))
 import Helpers.Events exposing (onClick)
-import Components.Tags exposing (Tag, isTagActive)
 import Components.SideBar as SideBar
 import Html exposing (Html, a, article, div, h1, h2, header, img, p, span, text)
 import Html.Attributes exposing (alt, class, classList, href, src)
@@ -23,13 +23,13 @@ viewHome state =
 
 
 viewSideBar : State -> Html Msg
-viewSideBar { places, categories, visiblePlaces, visibleCategories } =
+viewSideBar { tags } =
     div
         [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
         [ SideBar.title "Filtrer par type d'endroits"
-        , SideBar.tags Category categories visibleCategories
+        , SideBar.tags Category tags
         , SideBar.title "Filtrer par lieu"
-        , SideBar.tags Place places visiblePlaces
+        , SideBar.tags Place tags
         ]
 
 

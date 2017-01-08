@@ -1,6 +1,6 @@
 module Contentful exposing (..)
 
-import Components.Tags exposing (Tag)
+import Components.Tags exposing (Tag, TagKind(Category, Place))
 import Json.Decode as D
 import List.Extra exposing (find)
 import Models exposing (Article, Url)
@@ -36,8 +36,8 @@ type ChildSys
     = ChildSys Sys
 
 
-decodeTag : Entries -> Sys -> Tag
-decodeTag entries sys =
+decodeTag : Entries -> TagKind -> Sys -> Tag
+decodeTag entries kind sys =
     case entries.includes of
         Just includes ->
             find (\entry -> sys.id == entry.sys.id) includes.entry
@@ -45,10 +45,10 @@ decodeTag entries sys =
                 |> Maybe.map (D.decodeValue <| D.field "title" D.string)
                 |> Maybe.map (Result.withDefault "")
                 |> Maybe.withDefault ""
-                |> (\title -> { name = title, id = Maybe.withDefault "" sys.id })
+                |> (\title -> { name = title, id = Maybe.withDefault "" sys.id, isActive = False, kind = kind })
 
         Nothing ->
-            { id = "", name = "" }
+            { id = "", name = "", isActive = False, kind = kind }
 
 
 decodeThumbnail : Entries -> Sys -> Url
@@ -74,8 +74,8 @@ decodeArticle entries =
         (D.at [ "fields", "resume" ] D.string)
         (D.at [ "fields", "body" ] D.string)
         (D.map (decodeThumbnail entries) <| D.at [ "fields", "thumbnail", "sys" ] decodeSys)
-        (D.at [ "fields", "categories" ] <| D.list <| D.field "sys" <| D.map (decodeTag entries) decodeSys)
-        (D.map (decodeTag entries) <| D.at [ "fields", "place", "sys" ] decodeSys)
+        (D.at [ "fields", "categories" ] <| D.list <| D.field "sys" <| D.map (decodeTag entries Category) decodeSys)
+        (D.map (decodeTag entries Place) <| D.at [ "fields", "place", "sys" ] decodeSys)
 
 
 decodeArticles : D.Decoder (List Article)

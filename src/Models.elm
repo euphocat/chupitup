@@ -1,6 +1,7 @@
 module Models exposing (..)
 
 import Components.Tags exposing (..)
+import Dict exposing (Dict)
 import Routing.Routes exposing (Route)
 
 
@@ -22,22 +23,14 @@ type alias Article =
 
 type alias State =
     { route : Route
-    , editor : Maybe Article
     , articles : Maybe (List Article)
-    , categories : Maybe (List Tag)
-    , places : Maybe (List Tag)
-    , visiblePlaces : List Tag
-    , visibleCategories : List Tag
+    , tags : Dict String Tag
     }
 
 
 newState : Route -> State
 newState route =
     { route = route
-    , editor = Nothing
     , articles = Nothing
-    , categories = Nothing
-    , places = Nothing
-    , visiblePlaces = []
-    , visibleCategories = []
+    , tags = Dict.empty
     }

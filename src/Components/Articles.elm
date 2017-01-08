@@ -1,8 +1,9 @@
-module Components.Articles exposing (getArticles, getFilteredArticles, getPlaces, getCategories)
+module Components.Articles exposing (getArticles, getFilteredArticles, getTags)
 
-import Components.Tags exposing (Tag, toggleVisibleTag)
+import Components.Tags exposing (Tag, TagKind(Category, Place), toggleTags)
 import Contentful exposing (decodeArticles)
-import Messages exposing (FetchMsg, FetchMsg(FetchCategories, FetchFilteredArticles, FetchPlaces), Msg(FetchTask), TagType(Category, Place))
+import Dict exposing (Dict)
+import Messages exposing (FetchMsg(FetchFilteredArticles, FetchTags), Msg(FetchTask))
 import Models exposing (Article, State)
 import Json.Decode as D
 import Http exposing (expectJson, request)
@@ -19,21 +20,17 @@ getArticles =
         get path decodeArticles
 
 
-getFilteredArticles : ( List Tag, List Tag ) -> TagType -> Tag -> Cmd Msg
-getFilteredArticles ( visiblePlaces, visibleCategories ) tagType tag =
+getFilteredArticles : Dict String Tag -> Tag -> Cmd Msg
+getFilteredArticles tags tag =
     let
-        formatTags tags =
+        formatTags kind tags =
             tags
-                |> List.map .id
+                |> Dict.filter (\_ t -> t.kind == kind && t.isActive)
+                |> Dict.keys
                 |> String.join ","
 
-        tags =
-            case tagType of
-                Place ->
-                    ( toggleVisibleTag tag visiblePlaces, visibleCategories )
-
-                Category ->
-                    ( visiblePlaces, toggleVisibleTag tag visibleCategories )
+        toggledTags =
+            toggleTags tag tags
 
         addNotEmpty key value querystring =
             if value /= "" then
@@ -41,15 +38,16 @@ getFilteredArticles ( visiblePlaces, visibleCategories ) tagType tag =
             else
                 querystring
 
-        querystring ( places, categories ) =
+        querystring tags =
             QueryString.empty
-                |> addNotEmpty "fields.place.sys.id[in]" (formatTags places)
-                |> addNotEmpty "fields.categories.sys.id[in]" (formatTags categories)
+                |> addNotEmpty "fields.place.sys.id[in]" (formatTags Place tags)
+                |> addNotEmpty "fields.categories.sys.id[in]" (formatTags Category tags)
                 |> QueryString.add "content_type" "articles"
                 |> QueryString.render
+                |> (++) "/entries"
     in
-        (Http.toTask <| get ("/entries" ++ (querystring tags)) decodeArticles)
-            |> Task.map (\articles -> ( articles, tags ))
+        (Http.toTask <| get (querystring toggledTags) decodeArticles)
+            |> Task.map (\articles -> ( articles, toggledTags ))
             |> Task.attempt (FetchTask << FetchFilteredArticles)
 
 
@@ -73,31 +71,31 @@ get path decoder =
             }
 
 
-getCategories : Cmd Msg
-getCategories =
+getTags : TagKind -> Cmd Msg
+getTags kind =
     let
         path =
-            "/entries?content_type=categories"
+            case kind of
+                Category ->
+                    "/entries?content_type=categories"
+
+                Place ->
+                    "/entries?content_type=places"
     in
-        Http.send (FetchTask << FetchCategories) <| get path decodeTags
+        Http.send (FetchTask << FetchTags) <| get path <| decodeTags kind
 
 
-getPlaces : Cmd Msg
-getPlaces =
-    let
-        path =
-            "/entries?content_type=places"
-    in
-        Http.send (FetchTask << FetchPlaces) <| get path decodeTags
+decodeTags : TagKind -> D.Decoder (Dict String Tag)
+decodeTags kind =
+    (D.field "items" <| D.list <| decodeTag kind)
+        |> D.map (List.map (\tag -> ( tag.id, tag )))
+        |> D.map Dict.fromList
 
 
-decodeTags : D.Decoder (List Tag)
-decodeTags =
-    D.field "items" <| D.list decodeTag
-
-
-decodeTag : D.Decoder Tag
-decodeTag =
-    D.map2 Tag
+decodeTag : TagKind -> D.Decoder Tag
+decodeTag kind =
+    D.map4 Tag
         (D.at [ "sys", "id" ] D.string)
         (D.at [ "fields", "title" ] D.string)
+        (D.succeed False)
+        (D.succeed kind)

@@ -1,9 +1,10 @@
 module Update exposing (..)
 
-import Components.Articles exposing (getArticles, getFilteredArticles)
+import Components.Articles exposing (getFilteredArticles)
 import Messages exposing (..)
 import Models exposing (Article, State)
 import Routing.Routes exposing (..)
+import Dict
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -12,10 +13,8 @@ update msg state =
         NoOp ->
             ( state, Cmd.none )
 
-        ToggleVisibleTag tagType tag ->
-            ( state
-            , getFilteredArticles ( state.visiblePlaces, state.visibleCategories ) tagType tag
-            )
+        ToggleVisibleTag tag ->
+            ( state, getFilteredArticles state.tags tag )
 
         ShowArticle articleId ->
             ( state, navigationToRoute <| ArticleRoute articleId )
@@ -33,17 +32,11 @@ update msg state =
 updateFetch : FetchMsg -> State -> ( State, Cmd Msg )
 updateFetch msg state =
     case msg of
-        FetchPlaces (Err error) ->
+        FetchTags (Err error) ->
             ( state, Cmd.none )
 
-        FetchPlaces (Ok places) ->
-            ( { state | places = Just places }, Cmd.none )
-
-        FetchCategories (Err error) ->
-            ( state, Cmd.none )
-
-        FetchCategories (Ok categories) ->
-            ( { state | categories = Just categories }, Cmd.none )
+        FetchTags (Ok tags) ->
+            ( { state | tags = Dict.union state.tags tags }, Cmd.none )
 
         FetchArticles (Err error) ->
             let
@@ -58,7 +51,7 @@ updateFetch msg state =
         FetchFilteredArticles (Err error) ->
             ( state, Cmd.none )
 
-        FetchFilteredArticles (Ok ( articles, ( visiblePlaces, visibleCategories ) )) ->
-            ( { state | articles = Just articles, visiblePlaces = visiblePlaces, visibleCategories = visibleCategories }
+        FetchFilteredArticles (Ok ( articles, tags )) ->
+            ( { state | articles = Just articles, tags = tags }
             , Cmd.none
             )

@@ -1,21 +1,26 @@
 module Components.Tags exposing (..)
 
+import Dict exposing (Dict)
+
+
+type TagKind
+    = Place
+    | Category
+
 
 type alias Tag =
     { id : String
     , name : String
+    , isActive : Bool
+    , kind : TagKind
     }
 
 
-toggleVisibleTag : Tag -> List Tag -> List Tag
-toggleVisibleTag tag visibleTags =
-    if List.member tag visibleTags then
-        visibleTags
-            |> List.filter ((/=) tag)
-    else
-        tag :: visibleTags
+toggleTag : Tag -> Tag
+toggleTag tag =
+    { tag | isActive = not tag.isActive }
 
 
-isTagActive : Tag -> List Tag -> Bool
-isTagActive =
-    List.member
+toggleTags : Tag -> Dict String Tag -> Dict String Tag
+toggleTags tag =
+    Dict.update tag.id <| Maybe.map toggleTag

@@ -4,11 +4,12 @@ module Components.SideBar
         , tags
         )
 
-import Components.Tags exposing (Tag, isTagActive)
+import Components.Tags exposing (Tag, TagKind)
+import Dict exposing (Dict)
 import Helpers.Events exposing (onClick)
 import Html exposing (Html, a, div, h2, span, text)
 import Html.Attributes exposing (class, classList)
-import Messages exposing (Msg(ToggleVisibleTag), TagType)
+import Messages exposing (Msg(ToggleVisibleTag))
 
 
 title : String -> Html msg
@@ -16,27 +17,27 @@ title content =
     h2 [] [ span [] [ text content ] ]
 
 
-tags : TagType -> Maybe (List Tag) -> List Tag -> Html Msg
-tags tagType tags visibleTags =
-    div [ class "tags" ] (viewTags tagType tags visibleTags)
-
-
-viewTags : TagType -> Maybe (List Tag) -> List Tag -> List (Html Msg)
-viewTags tagType tags visibleTags =
+tags : TagKind -> Dict String Tag -> Html Msg
+tags kind tags =
     tags
-        |> Maybe.withDefault []
-        |> List.map (tagToLink tagType visibleTags)
+        |> Dict.filter (\_ t -> t.kind == kind)
+        |> (div [ class "tags" ] << viewTags)
 
 
-tagToLink : TagType -> List Tag -> Tag -> Html Msg
-tagToLink tagType visibleTags tag =
+viewTags : Dict String Tag -> List (Html Msg)
+viewTags tags =
+    tags
+        |> Dict.toList
+        |> List.map (tagToLink)
+
+
+tagToLink : ( String, Tag ) -> Html Msg
+tagToLink ( id, tag ) =
     a
         [ classList
             [ ( "pure-button", True )
-            , ( "pure-button-primary"
-              , isTagActive tag visibleTags
-              )
+            , ( "pure-button-primary", tag.isActive )
             ]
-        , onClick <| ToggleVisibleTag tagType tag
+        , onClick <| ToggleVisibleTag tag
         ]
         [ text <| tag.name ]

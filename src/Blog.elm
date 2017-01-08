@@ -1,6 +1,7 @@
 module Blog exposing (..)
 
-import Components.Articles exposing (getArticles, getCategories, getPlaces)
+import Components.Articles exposing (getArticles, getTags)
+import Components.Tags exposing (TagKind(Category, Place))
 import Messages exposing (FetchMsg(FetchArticles), Msg(FetchTask, NoOp, UpdateUrl))
 import Models exposing (State, newState)
 import Update exposing (update)
@@ -23,8 +24,8 @@ init location =
         requests : List (Cmd Msg)
         requests =
             [ Task.attempt (FetchTask << FetchArticles) <| Http.toTask getArticles
-            , getPlaces
-            , getCategories
+            , getTags Place
+            , getTags Category
             ]
     in
         ( newState route, Cmd.batch requests )
