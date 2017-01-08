@@ -1,36 +1,23 @@
-module Components.Articles exposing (getArticles, getFilteredArticles, getTags)
+module Components.Articles exposing (getArticles, getTags)
 
 import Components.Tags exposing (Tag, TagKind(Category, Place), toggleTags)
 import Contentful exposing (decodeArticles)
 import Dict exposing (Dict)
-import Messages exposing (FetchMsg(FetchFilteredArticles, FetchTags), Msg(FetchTask))
-import Models exposing (Article, State)
+import Messages exposing (FetchMsg(FetchArticles, FetchTags), Msg(FetchTask))
 import Json.Decode as D
 import Http exposing (expectJson, request)
 import Task
 import QueryString exposing (QueryString)
 
 
-getArticles : Http.Request (List Article)
-getArticles =
-    let
-        path =
-            "/entries?content_type=articles"
-    in
-        get path decodeArticles
-
-
-getFilteredArticles : Dict String Tag -> Tag -> Cmd Msg
-getFilteredArticles tags tag =
+getArticles : Dict String Tag -> Cmd Msg
+getArticles tags =
     let
         formatTags kind tags =
             tags
                 |> Dict.filter (\_ t -> t.kind == kind && t.isActive)
                 |> Dict.keys
                 |> String.join ","
-
-        toggledTags =
-            toggleTags tag tags
 
         addNotEmpty key value querystring =
             if value /= "" then
@@ -46,9 +33,8 @@ getFilteredArticles tags tag =
                 |> QueryString.render
                 |> (++) "/entries"
     in
-        (Http.toTask <| get (querystring toggledTags) decodeArticles)
-            |> Task.map (\articles -> ( articles, toggledTags ))
-            |> Task.attempt (FetchTask << FetchFilteredArticles)
+        (Http.toTask <| get (querystring tags) decodeArticles)
+            |> Task.attempt (FetchTask << FetchArticles)
 
 
 get : String -> D.Decoder a -> Http.Request a
@@ -88,8 +74,13 @@ getTags kind =
 decodeTags : TagKind -> D.Decoder (Dict String Tag)
 decodeTags kind =
     (D.field "items" <| D.list <| decodeTag kind)
-        |> D.map (List.map (\tag -> ( tag.id, tag )))
+        |> D.map (List.map tagToTuple)
         |> D.map Dict.fromList
+
+
+tagToTuple : Tag -> ( String, Tag )
+tagToTuple tag =
+    ( tag.id, tag )
 
 
 decodeTag : TagKind -> D.Decoder Tag

@@ -13,7 +13,6 @@ type alias ArticleId =
 
 type FetchMsg
     = FetchArticles (Result Http.Error (List Article))
-    | FetchFilteredArticles (Result Http.Error ( List Article, Dict String Tag ))
     | FetchTags (Result Http.Error (Dict String Tag))
 
 

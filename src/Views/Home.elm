@@ -27,9 +27,9 @@ viewSideBar { tags } =
     div
         [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
         [ SideBar.title "Filtrer par type d'endroits"
-        , SideBar.tags Category tags
+        , SideBar.tags ( Category, tags )
         , SideBar.title "Filtrer par lieu"
-        , SideBar.tags Place tags
+        , SideBar.tags ( Place, tags )
         ]
 
 

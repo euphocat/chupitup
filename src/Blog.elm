@@ -8,8 +8,7 @@ import Update exposing (update)
 import View exposing (view)
 import Navigation
 import Platform.Cmd
-import Task exposing (andThen, succeed)
-import Http
+import Dict
 import Routing.Parsers exposing (parse)
 import Routing.Routes exposing (Route(ArticleRoute))
 
@@ -23,7 +22,7 @@ init location =
 
         requests : List (Cmd Msg)
         requests =
-            [ Task.attempt (FetchTask << FetchArticles) <| Http.toTask getArticles
+            [ getArticles Dict.empty
             , getTags Place
             , getTags Category
             ]
@@ -36,16 +35,11 @@ urlUpdate =
     UpdateUrl << parse
 
 
-subscriptions : State -> Sub Msg
-subscriptions state =
-    Sub.none
-
-
 main : Program Never State Msg
 main =
     Navigation.program urlUpdate
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = (\_ -> Sub.none)
         }

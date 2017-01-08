@@ -1,8 +1,4 @@
-module Components.SideBar
-    exposing
-        ( title
-        , tags
-        )
+module Components.SideBar exposing (title, tags)
 
 import Components.Tags exposing (Tag, TagKind)
 import Dict exposing (Dict)
@@ -17,22 +13,21 @@ title content =
     h2 [] [ span [] [ text content ] ]
 
 
-tags : TagKind -> Dict String Tag -> Html Msg
-tags kind tags =
+tags : ( TagKind, Dict String Tag ) -> Html Msg
+tags =
+    div [ class "tags" ] << viewTags
+
+
+viewTags : ( TagKind, Dict String Tag ) -> List (Html Msg)
+viewTags ( kind, tags ) =
     tags
         |> Dict.filter (\_ t -> t.kind == kind)
-        |> (div [ class "tags" ] << viewTags)
+        |> Dict.values
+        |> List.map tagToLink
 
 
-viewTags : Dict String Tag -> List (Html Msg)
-viewTags tags =
-    tags
-        |> Dict.toList
-        |> List.map (tagToLink)
-
-
-tagToLink : ( String, Tag ) -> Html Msg
-tagToLink ( id, tag ) =
+tagToLink : Tag -> Html Msg
+tagToLink tag =
     a
         [ classList
             [ ( "pure-button", True )

@@ -1,6 +1,7 @@
 module Update exposing (..)
 
-import Components.Articles exposing (getFilteredArticles)
+import Components.Articles exposing (getArticles)
+import Components.Tags exposing (toggleTags)
 import Messages exposing (..)
 import Models exposing (Article, State)
 import Routing.Routes exposing (..)
@@ -14,7 +15,11 @@ update msg state =
             ( state, Cmd.none )
 
         ToggleVisibleTag tag ->
-            ( state, getFilteredArticles state.tags tag )
+            let
+                newState =
+                    { state | tags = toggleTags tag state.tags }
+            in
+                ( newState, getArticles newState.tags )
 
         ShowArticle articleId ->
             ( state, navigationToRoute <| ArticleRoute articleId )
@@ -39,19 +44,7 @@ updateFetch msg state =
             ( { state | tags = Dict.union state.tags tags }, Cmd.none )
 
         FetchArticles (Err error) ->
-            let
-                _ =
-                    Debug.log "Error articles" error
-            in
-                ( state, Cmd.none )
+            ( state, Cmd.none )
 
         FetchArticles (Ok articles) ->
             ( { state | articles = Just articles }, Cmd.none )
-
-        FetchFilteredArticles (Err error) ->
-            ( state, Cmd.none )
-
-        FetchFilteredArticles (Ok ( articles, tags )) ->
-            ( { state | articles = Just articles, tags = tags }
-            , Cmd.none
-            )
