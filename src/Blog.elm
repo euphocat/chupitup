@@ -9,6 +9,7 @@ import View exposing (view)
 import Navigation
 import Platform.Cmd
 import Dict
+import Task
 import Routing.Parsers exposing (parse)
 import Routing.Routes exposing (Route(ArticleRoute))
 

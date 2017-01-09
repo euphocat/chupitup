@@ -17,7 +17,7 @@ update msg state =
         ToggleVisibleTag tag ->
             let
                 newState =
-                    { state | tags = toggleTags tag state.tags }
+                    { state | tags = toggleTags tag state.tags, isLoading = True }
             in
                 ( newState, getArticles newState.tags )
 
@@ -47,4 +47,4 @@ updateFetch msg state =
             ( state, Cmd.none )
 
         FetchArticles (Ok articles) ->
-            ( { state | articles = Just articles }, Cmd.none )
+            ( { state | articles = Just articles, isLoading = False }, Cmd.none )

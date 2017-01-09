@@ -25,6 +25,7 @@ type alias State =
     { route : Route
     , articles : Maybe (List Article)
     , tags : Dict String Tag
+    , isLoading : Bool
     }
 
 
@@ -33,4 +34,5 @@ newState route =
     { route = route
     , articles = Nothing
     , tags = Dict.empty
+    , isLoading = True
     }
