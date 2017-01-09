@@ -15,7 +15,7 @@ viewHeader isLoading =
         , div
             [ classList
                 [ ( "isHidden", not isLoading )
-                , ( "loading", True )
+                , ( "loading pure-button pure-button-primary", True )
                 ]
             ]
             [ text "Chargement" ]
