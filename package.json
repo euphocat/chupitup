@@ -1,5 +1,5 @@
 {
-  "name": "elm-blog",
+  "name": "chupitup",
   "version": "1.0.0",
   "description": "Following elm tuto: https://www.linkedin.com/pulse/single-page-web-apps-elm-part-one-getting-started-new-kevin-greene",
   "main": "index.js",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/euphocat/elm-blog.git"
+    "url": "git+https://github.com/euphocat/chupitup.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/euphocat/elm-blog/issues"
+    "url": "https://github.com/euphocat/chupitup/issues"
   },
-  "homepage": "https://github.com/euphocat/elm-blog#readme",
+  "homepage": "https://github.com/euphocat/chupitup#readme",
   "devDependencies": {
     "autoless": "^0.1.7",
     "less": "^2.7.1",

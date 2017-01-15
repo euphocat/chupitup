@@ -1,4 +1,4 @@
-module Blog exposing (..)
+module Main exposing (..)
 
 import Components.Articles exposing (getArticles, getTags)
 import Components.Tags exposing (TagKind(Category, Place))

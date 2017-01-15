@@ -10,7 +10,7 @@ cd ${PROJECT_DIR}
 # hack to always get warnings
 # rm elm-stuff/build-artifacts -Rf
 
-ELM_MAKE_RESULT=$(elm-make src/Blog.elm --warn --output=build/Blog.js --yes)
+ELM_MAKE_RESULT=$(elm-make src/Main.elm --warn --output=build/Main.js --yes)
 
 if [[ $ELM_MAKE_RESULT != Success* ]] ;
 then
@@ -24,8 +24,8 @@ echo $ELM_MAKE_RESULT 1>&2
 
 success "Elm compilation"
 
-uglifyjs build/Blog.js \
-        -o build/Blog.min.js \
+uglifyjs build/Main.js \
+        -o build/Main.min.js \
         --screw-ie8
 
 success "Uglifying"
