@@ -45,7 +45,7 @@ viewArticle { id, title, description, photoThumbnail } =
         [ div
             [ class "post-thumbnail" ]
             [ linkToArticle id
-                [ img [ alt title, src photoThumbnail ] []
+                [ img [ alt title, src <| photoThumbnail ++ "?h=250&fl=progressive" ] []
                 ]
             ]
         , div
