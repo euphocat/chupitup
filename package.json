@@ -6,6 +6,7 @@
   "scripts": {
     "start": "./bin/start.sh",
     "make": "./bin/elm-make.sh",
+    "html": "./bin/html-make.sh",
     "build": "./bin/build.sh --no-watch --clean-elm",
     "clean": "rm build/* -Rf & rm elm-stuff/build-artifacts -Rf",
     "less": "lessc less/main.less > build/css/main.css"

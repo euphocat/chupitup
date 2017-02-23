@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Chupitup blog, miam !",
-    "repository": "git+https://github.com/euphocat/chupitup.git",
+    "repository": "https://github.com/euphocat/chupitup.git",
     "license": "BSD3",
     "source-directories": [
         "src"
