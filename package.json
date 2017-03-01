@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline",
     "build": "rimraf dist && webpack",
-    "reinstall": "npm i rimraf && rimraf node_modules && npm i && elm package install --yes"
+    "reinstall": "npm i rimraf && rimraf node_modules && npm i && elm package install --yes",
+    "prod": "live-server dist --entry-file=index.html"
   },
   "repository": {
     "type": "git",
