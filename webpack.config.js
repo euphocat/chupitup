@@ -10,6 +10,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TARGET_ENV = process.env.npm_lifecycle_event === 'build' ? 'production' : 'development';
 const outputFilename = TARGET_ENV === 'production' ? '[name]-[hash].js' : '[name].js';
 
+const extractVendors = new ExtractTextPlugin('[name]-vendors.css');
+const extractLess = new ExtractTextPlugin('styles-[contenthash].css');
+
 const commonConfig = {
 
   entry: resolve(__dirname, 'src/static/index.js'),
@@ -36,8 +39,20 @@ const commonConfig = {
         ]
       },
       {
+        test: /\.css$/,
+        include: /node_modules/,
+        use: extractVendors.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-loader'
+          ]
+        })
+
+      },
+      {
         test: /\.(css|less)$/,
-        use: ExtractTextPlugin.extract({
+        exclude: /node_modules/,
+        use: extractLess.extract({
           fallback: 'style-loader',
           use: [
             {
@@ -64,7 +79,9 @@ const commonConfig = {
       inject: 'body',
       filename: 'index.html'
     }),
-    new ExtractTextPlugin('style.css'),
+    extractVendors,
+    extractLess,
+    //extractLess,
     new CopyWebpackPlugin([
       {
         from: 'src/static/images/',
@@ -88,7 +105,8 @@ if (TARGET_ENV === 'development') {
       // serve index.html in place of 404 responses
       historyApiFallback: true,
       contentBase: path.join(__dirname, 'dist'),
-      port: 8080
+      port: 8080,
+      host: '0.0.0.0'
     },
 
     module: {
