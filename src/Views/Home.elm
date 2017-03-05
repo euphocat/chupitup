@@ -26,7 +26,7 @@ viewSideBar : State -> Html Msg
 viewSideBar { tags } =
     div
         [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
-        [ SideBar.title "Filtrer par type d'endroits"
+        [ SideBar.title "Filtrer par endroit"
         , SideBar.tags ( Category, tags )
         , SideBar.title "Filtrer par lieu"
         , SideBar.tags ( Place, tags )
