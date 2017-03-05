@@ -86,6 +86,9 @@ const commonConfig = {
       {
         from: 'src/static/images/',
         to: 'images/'
+      },
+      {
+        from: 'src/static/favicon.ico'
       }
     ])
   ]
