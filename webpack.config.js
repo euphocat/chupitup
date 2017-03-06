@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 
 const TARGET_ENV = process.env.npm_lifecycle_event === 'build' ? 'production' : 'development';
 const outputFilename = TARGET_ENV === 'production' ? '[name]-[hash].js' : '[name].js';
@@ -79,6 +80,10 @@ const commonConfig = {
       inject: 'body',
       filename: 'index.html'
     }),
+    new StyleLintPlugin({
+      context: 'src',
+      files: '**/*.less'
+    }),
     extractVendors,
     extractLess,
     new CopyWebpackPlugin([
@@ -89,7 +94,8 @@ const commonConfig = {
       {
         from: 'src/static/favicon.ico'
       }
-    ])
+    ]),
+
   ]
 };
 
