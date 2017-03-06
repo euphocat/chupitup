@@ -39,8 +39,10 @@ renderArticle { description, title, resume, body } =
             ]
         ]
     , div [ class "article-details pure-u-1 pure-u-lg-2-3" ]
-        [ h1 [] [ text <| title ]
-        , Markdown.toHtml [] body
+        [ div [ class "wrapper" ]
+            [ h1 [] [ text <| title ]
+            , Markdown.toHtml [] body
+            ]
         ]
     ]
 
