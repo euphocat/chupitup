@@ -81,7 +81,6 @@ const commonConfig = {
     }),
     extractVendors,
     extractLess,
-    //extractLess,
     new CopyWebpackPlugin([
       {
         from: 'src/static/images/',
@@ -99,16 +98,10 @@ if (TARGET_ENV === 'development') {
 
   module.exports = merge(commonConfig, {
 
-    output: {
-      path: resolve(__dirname, 'dist'),
-      filename: `static/${outputFilename}`,
-    },
-
     devServer: {
-      // serve index.html in place of 404 responses
       historyApiFallback: true,
       contentBase: path.join(__dirname, 'dist'),
-      port: 8080,
+      port: 3000,
       host: '0.0.0.0'
     },
 
