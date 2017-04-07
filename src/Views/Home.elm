@@ -18,14 +18,16 @@ viewHome state =
 
         Just articles ->
             [ viewSideBar state
-            , div [ class "main pure-u-1 pure-u-lg-2-3" ] (viewArticles articles)
+            , div [ class "main" ]
+                [ div [ class "article-wrapper" ] (viewArticles articles)
+                ]
             ]
 
 
 viewSideBar : State -> Html Msg
 viewSideBar { tags } =
     div
-        [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
+        [ class "sidebar" ]
         [ SideBar.title "Filtrer par endroit"
         , SideBar.tags ( Category, tags )
         , SideBar.title "Filtrer par lieu"
@@ -41,7 +43,7 @@ linkToArticle id =
 viewArticle : Article -> Html Msg
 viewArticle { id, title, description, photoThumbnail } =
     article
-        [ class "pure-u-5-12" ]
+        []
         [ div
             [ class "post-thumbnail" ]
             [ linkToArticle id
