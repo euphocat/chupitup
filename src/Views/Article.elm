@@ -18,7 +18,7 @@ findArticle articles id =
 
 renderArticle : Article -> List (Html Msg)
 renderArticle { description, title, resume, body } =
-    [ div [ class "sidebar pure-u-1 pure-u-lg-1-3" ]
+    [ div [ class "sidebar" ]
         [ SideBar.title "En résumé..."
         , div [ class "tags" ] [ text resume ]
         , SideBar.title "Adresse"
@@ -38,11 +38,9 @@ renderArticle { description, title, resume, body } =
             , li [] [ text "Twitter" ]
             ]
         ]
-    , div [ class "article-details pure-u-1 pure-u-lg-2-3" ]
-        [ div [ class "wrapper" ]
-            [ h1 [] [ text <| title ]
-            , Markdown.toHtml [] body
-            ]
+    , div [ class "article-details" ]
+        [ h1 [] [ text <| title ]
+        , Markdown.toHtml [] body
         ]
     ]
 
