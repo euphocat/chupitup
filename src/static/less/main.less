@@ -1,5 +1,10 @@
 @base: #000;
 
+@sm: 35.5em;
+@md: 48em;
+@lg: 64em;
+@xl: 80em;
+
 @font-face {
   font-family: 'Raleway';
   font-style: normal;
@@ -10,11 +15,11 @@
 body {
   background: #e8e8e8;
 
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: @lg) {
     background: url("/images/content-bg.gif") repeat scroll -805px center #e8e8e8;
   }
 
-  @media screen and (min-width: 80em) {
+  @media screen and (min-width: @xl) {
     background: url("/images/content-bg.gif") repeat scroll 48.7% center #e8e8e8;
   }
 }
@@ -30,7 +35,7 @@ header {
   padding-bottom: 1rem;
   background: white;
 
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: @lg) {
     background: transparent;
   }
 
@@ -83,7 +88,7 @@ header {
   color: #555;
   padding-bottom: 1em;
 
-  @media screen and (min-width: 64em) {
+  @media screen and (min-width: @lg) {
     background: transparent;
     box-shadow: none;
     padding-bottom: 0;
@@ -118,6 +123,17 @@ header {
   }
 }
 
+.double-line-bg {
+  color: black;
+  background: url("/images/double-line.png") repeat-x scroll center center transparent;
+
+  > * {
+    background: white;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
 .error-message {
   background: red;
   color: white;
@@ -137,13 +153,21 @@ header {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    padding-left: 15px;
+    padding: 2em;
+
+    @media screen and (min-width: @lg) {
+      padding: 0 0 0 15px;
+    }
 
     article {
       box-shadow: 0 0 5px #ccc;
       background: white;
-      width: 42%;
       margin-bottom: 20px;
+      width: 100%;
+
+      @media screen and (min-width: @lg) {
+        width: 42%;
+      }
 
       h2 {
         margin: 0.5rem 0;
@@ -154,6 +178,24 @@ header {
         height: 250px;
         overflow: hidden;
         text-align: center;
+
+        a {
+          overflow: hidden;
+          display: block;
+          height: 250px;
+        }
+
+        img {
+          transition: 200ms linear all;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        a:hover img {
+          transform: scale(1.2);
+          filter: saturate(1.2);
+        }
       }
 
       p {
@@ -180,35 +222,5 @@ header {
     border: 0.5rem white solid;
     box-shadow: 0 0 5px #999;
     max-width: 98%;
-  }
-}
-
-.admin {
-  .editor {
-    height: 100vh;
-  }
-
-  .placeholder {
-    color: lighten(@base, 50%);
-  }
-
-  .editor-view > *:first-child {
-    margin-top: 0;
-  }
-
-  .padding5 {
-    padding: 1rem;
-  }
-}
-
-.actions {
-  position: absolute;
-  right: 20px;
-  bottom: 50px;
-
-  button {
-    border-radius: 10px;
-    margin-left: 15px;
-    box-shadow: 0 0 10px #888;
   }
 }

@@ -15,7 +15,7 @@ type Route
 
 navigationToRoute : Route -> Cmd a
 navigationToRoute route =
-    Navigation.newUrl (reverse route)
+    Navigation.newUrl <| reverse route
 
 
 reverse : Route -> String

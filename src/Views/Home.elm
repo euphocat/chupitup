@@ -47,12 +47,12 @@ viewArticle { id, title, description, photoThumbnail } =
         [ div
             [ class "post-thumbnail" ]
             [ linkToArticle id
-                [ img [ alt title, src <| photoThumbnail ++ "?h=250&fl=progressive" ] []
+                [ img [ alt title, src <| photoThumbnail ++ "?h=500&w=950&fit=fill&fl=progressive" ] []
                 ]
             ]
         , div
             []
-            [ h2 [] [ linkToArticle id [ text title ] ]
+            [ h2 [ class "double-line-bg" ] [ linkToArticle id [ text title ] ]
             , p [] [ linkToArticle id [ text description ] ]
             ]
         ]
