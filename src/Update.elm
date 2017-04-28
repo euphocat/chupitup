@@ -38,13 +38,21 @@ updateFetch : FetchMsg -> State -> ( State, Cmd Msg )
 updateFetch msg state =
     case msg of
         FetchTags (Err error) ->
-            ( state, Cmd.none )
+            logError msg state
 
         FetchTags (Ok tags) ->
             ( { state | tags = Dict.union state.tags tags }, Cmd.none )
 
         FetchArticles (Err error) ->
-            ( state, Cmd.none )
+            logError msg state
 
         FetchArticles (Ok articles) ->
             ( { state | articles = Just articles, isLoading = False }, Cmd.none )
+
+
+logError msg state =
+    let
+        _ =
+            Debug.log "error" msg
+    in
+        ( state, Cmd.none )
