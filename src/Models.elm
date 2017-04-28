@@ -11,6 +11,7 @@ type alias Url =
 
 type alias Article =
     { id : String
+    , slug : String
     , title : String
     , description : String
     , resume : String
@@ -18,6 +19,7 @@ type alias Article =
     , photoThumbnail : Url
     , categories : List Tag
     , place : Tag
+    , googleMapUrl : String
     }
 
 

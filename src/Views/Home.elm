@@ -28,32 +28,32 @@ viewSideBar : State -> Html Msg
 viewSideBar { tags } =
     div
         [ class "sidebar" ]
-        [ SideBar.title "Filtrer par endroit"
+        [ SideBar.title "Filtrer par type d'endroit"
         , SideBar.tags ( Category, tags )
         , SideBar.title "Filtrer par lieu"
         , SideBar.tags ( Place, tags )
         ]
 
 
-linkToArticle : ArticleId -> List (Html Msg) -> Html Msg
-linkToArticle id =
-    a [ onClick <| ShowArticle id, href <| reverse <| ArticleRoute id ]
+linkToArticle : ArticleSlug -> List (Html Msg) -> Html Msg
+linkToArticle slug =
+    a [ onClick <| ShowArticle slug, href <| reverse <| ArticleRoute slug ]
 
 
 viewArticle : Article -> Html Msg
-viewArticle { id, title, description, photoThumbnail } =
+viewArticle { slug, title, description, photoThumbnail } =
     article
         []
         [ div
             [ class "post-thumbnail" ]
-            [ linkToArticle id
+            [ linkToArticle slug
                 [ img [ alt title, src <| photoThumbnail ++ "?h=500&w=950&fit=fill&fl=progressive" ] []
                 ]
             ]
         , div
             []
-            [ h2 [ class "double-line-bg" ] [ linkToArticle id [ text title ] ]
-            , p [] [ linkToArticle id [ text description ] ]
+            [ h2 [ class "double-line-bg" ] [ linkToArticle slug [ text title ] ]
+            , p [] [ linkToArticle slug [ text description ] ]
             ]
         ]
 

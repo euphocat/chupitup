@@ -7,7 +7,7 @@ import Models exposing (Article)
 import Routing.Routes exposing (Route)
 
 
-type alias ArticleId =
+type alias ArticleSlug =
     String
 
 
@@ -20,6 +20,6 @@ type Msg
     = UpdateUrl Route
     | ToggleVisibleTag Tag
     | ShowHome
-    | ShowArticle ArticleId
+    | ShowArticle ArticleSlug
     | NoOp
     | FetchTask FetchMsg

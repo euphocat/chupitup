@@ -2,6 +2,7 @@ module Contentful exposing (..)
 
 import Components.Tags exposing (Tag, TagKind(Category, Place))
 import Json.Decode as D
+import Json.Decode.Pipeline exposing (custom, decode, requiredAt)
 import List.Extra exposing (find)
 import Models exposing (Article, Url)
 
@@ -67,15 +68,17 @@ decodeThumbnail entries sys =
 
 decodeArticle : Entries -> D.Decoder Article
 decodeArticle entries =
-    D.map8 Article
-        (D.at [ "sys", "id" ] D.string)
-        (D.at [ "fields", "title" ] D.string)
-        (D.at [ "fields", "description" ] D.string)
-        (D.at [ "fields", "resume" ] D.string)
-        (D.at [ "fields", "body" ] D.string)
-        (D.map (decodeThumbnail entries) <| D.at [ "fields", "thumbnail", "sys" ] decodeSys)
-        (D.at [ "fields", "categories" ] <| D.list <| D.field "sys" <| D.map (decodeTag entries Category) decodeSys)
-        (D.map (decodeTag entries Place) <| D.at [ "fields", "place", "sys" ] decodeSys)
+    decode Article
+        |> requiredAt [ "sys", "id" ] D.string
+        |> requiredAt [ "fields", "slug" ] D.string
+        |> requiredAt [ "fields", "title" ] D.string
+        |> requiredAt [ "fields", "description" ] D.string
+        |> requiredAt [ "fields", "resume" ] D.string
+        |> requiredAt [ "fields", "body" ] D.string
+        |> custom (D.map (decodeThumbnail entries) <| D.at [ "fields", "thumbnail", "sys" ] decodeSys)
+        |> requiredAt [ "fields", "categories" ] (D.list <| D.field "sys" <| D.map (decodeTag entries Category) decodeSys)
+        |> custom (D.map (decodeTag entries Place) <| D.at [ "fields", "place", "sys" ] decodeSys)
+        |> requiredAt [ "fields", "googleMapUrl" ] D.string
 
 
 decodeArticles : D.Decoder (List Article)
