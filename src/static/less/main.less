@@ -1,4 +1,5 @@
 @base: #000;
+@light-text: #555;
 
 @sm: 35.5em;
 @md: 48em;
@@ -40,7 +41,7 @@ header {
   }
 
   h1 {
-    margin: 1rem 0 0.5rem;
+    margin: 1rem 0 0.5rem 2rem;
   }
 
   h1 a {
@@ -85,7 +86,7 @@ header {
 .sidebar {
   background: white;
   box-shadow: 0 0 10px #777;
-  color: #555;
+  color: @light-text;
   padding-bottom: 1em;
 
   @media screen and (min-width: @lg) {
@@ -164,6 +165,12 @@ header {
       background: white;
       margin-bottom: 20px;
       width: 100%;
+      transition: 200ms linear box-shadow, 200ms transform;
+
+      &:hover {
+        box-shadow: 0 0 20px #888;
+        transform: scale(1.05);
+      }
 
       @media screen and (min-width: @lg) {
         width: 42%;
@@ -172,6 +179,15 @@ header {
       h2 {
         margin: 0.5rem 0;
         font-size: 1.2rem;
+
+        a {
+          color: black;
+        }
+      }
+
+      a {
+        color: @light-text;
+        text-decoration: none;
       }
 
       .post-thumbnail {
@@ -190,11 +206,6 @@ header {
           width: 100%;
           height: 100%;
           object-fit: cover;
-        }
-
-        a:hover img {
-          transform: scale(1.2);
-          filter: saturate(1.2);
         }
       }
 

@@ -1,10 +1,10 @@
-module Components.SideBar exposing (title, tags)
+module Components.SideBar exposing (title, tags, viewIframe, socialSharer)
 
 import Components.Tags exposing (Tag, TagKind)
 import Dict exposing (Dict)
 import Helpers.Events exposing (onClick)
-import Html exposing (Html, a, div, h2, span, text)
-import Html.Attributes exposing (class, classList)
+import Html exposing (Html, a, div, h2, iframe, li, span, text, ul)
+import Html.Attributes exposing (attribute, class, classList, height, src, style)
 import Messages exposing (Msg(ToggleVisibleTag))
 
 
@@ -36,3 +36,23 @@ tagToLink tag =
         , onClick <| ToggleVisibleTag tag
         ]
         [ text <| tag.name ]
+
+
+socialSharer : Html msg
+socialSharer =
+    ul []
+        [ li [] [ text "Facebook" ]
+        , li [] [ text "Twitter" ]
+        ]
+
+
+viewIframe : String -> Html msg
+viewIframe url =
+    iframe
+        [ src <| "https://www.google.com/maps/embed?" ++ url
+        , height 300
+        , attribute "frameborder" "0"
+        , style [ ( "border", "0" ) ]
+        , attribute "allowfullscreen" "true"
+        ]
+        []
