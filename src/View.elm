@@ -15,7 +15,9 @@ view state =
     case state.route of
         _ ->
             div [ class "pure-g wrapper" ]
-                [ viewHeader state.isLoading, div [ class "pure-u-1" ] (viewBody state) ]
+                [ viewHeader state.isLoading
+                , div [ class "pure-u-1" ] <| viewBody state
+                ]
 
 
 viewBody : State -> List (Html Msg)
